@@ -13,7 +13,7 @@ const tareasRoutes = require('./routes/tareas');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
-const PORT = process.env.PORT || 3004;
+const PORT = process.env.PORT || 3005;
 
 // Conectar a la base de datos
 connectDB();

@@ -14,8 +14,9 @@ const app = express();
 const server = http.createServer(app); // <--- Crear servidor HTTP
 const io = new Server(server, { // <--- Inicializar Socket.IO
   cors: {
-    origin: "http://localhost:5173", // Reemplaza con el origen de tu frontend
-    methods: ["GET", "POST"]
+    origin: "*", // Allow all origins
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allow all common HTTP methods
+    credentials: true // Allow credentials
   }
 });
 
