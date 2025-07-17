@@ -3,10 +3,10 @@ require('dotenv').config();
 
 // Configuración de la conexión
 const dbConfig = {
-  host: 'localhost',
-  user: 'naturepharma',
-  password: 'Root123!',
-  database: 'sistema_solicitudes',
+  host: process.env.DB_HOST || 'localhost',
+  user: process.env.DB_USER || 'naturepharma',
+  password: process.env.DB_PASSWORD || 'Root123!',
+  database: process.env.DB_NAME || 'sistema_solicitudes',
   port: process.env.DB_PORT || 3306,
   waitForConnections: true,
   connectionLimit: 10,

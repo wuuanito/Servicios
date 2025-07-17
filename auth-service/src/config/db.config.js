@@ -4,7 +4,7 @@ module.exports = {
   development: {
     username: process.env.DB_USER || 'naturepharma',
     password: process.env.DB_PASSWORD || 'Root123!',
-    database: process.env.AUTH_DB_NAME || 'auth_service_db',
+    database: process.env.DB_NAME || 'auth_service_db',
     host: process.env.DB_HOST || 'localhost',
     port: process.env.DB_PORT || 3306,
     dialect: 'mysql',
@@ -13,7 +13,7 @@ module.exports = {
   test: {
     username: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || 'Root123!',
-    database: process.env.AUTH_DB_NAME_TEST || 'auth_service_test',
+    database: process.env.DB_NAME_TEST || 'auth_service_test',
     host: process.env.DB_HOST || 'localhost',
     port: process.env.DB_PORT || 3306,
     dialect: 'mysql',
@@ -22,7 +22,7 @@ module.exports = {
   production: {
     username: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    database: process.env.AUTH_DB_NAME,
+    database: process.env.DB_NAME,
     host: process.env.DB_HOST,
     port: process.env.DB_PORT || 3306,
     dialect: 'mysql',
