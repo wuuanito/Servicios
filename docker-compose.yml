@@ -151,7 +151,7 @@ services:
 
 volumes:
   # mysql_data:  # Comentado porque ahora usa MySQL local
-    driver: local
+    # driver: local
 
 networks:
   naturepharma-network:
