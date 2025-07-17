@@ -64,9 +64,10 @@ start_dev() {
 
 # Función para iniciar solo la base de datos
 start_db_only() {
-    print_message "Iniciando solo la base de datos..."
-    docker-compose up -d mysql phpmyadmin
-    print_success "Base de datos iniciada. phpMyAdmin disponible en http://localhost:8080"
+    print_message "Iniciando solo phpMyAdmin (MySQL debe estar corriendo localmente)..."
+    docker-compose up -d phpmyadmin
+    print_success "phpMyAdmin iniciado. Disponible en http://localhost:8080"
+    print_warning "Asegúrate de que MySQL esté corriendo localmente en el puerto 3306"
 }
 
 # Función para ejecutar tests
@@ -169,7 +170,7 @@ show_help() {
     echo "  $0 start"
     echo "  $0 logs auth-service"
     echo "  $0 restart-svc calendar-service"
-    echo "  $0 exec mysql"
+    echo "  $0 exec phpmyadmin"
 }
 
 # Función principal

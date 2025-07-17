@@ -10,7 +10,7 @@ Este proyecto contiene una suite completa de microservicios para NaturePharma, c
 - **Calendar Service** (Puerto 3003) - Gestión de calendario y eventos
 - **Laboratorio Service** (Puerto 3004) - Gestión de defectos de fabricación y tareas
 - **Solicitudes Service** (Puerto 3001) - Sistema de solicitudes en tiempo real
-- **MySQL Database** (Puerto 3306) - Base de datos compartida
+- **MySQL Database** (Puerto 3306) - Base de datos local (no dockerizada)
 - **phpMyAdmin** (Puerto 8080) - Interfaz web para administración de BD
 - **Nginx** (Puerto 80/443) - Reverse proxy y API Gateway
 
@@ -22,6 +22,7 @@ Este proyecto contiene una suite completa de microservicios para NaturePharma, c
 - Docker 20.10+
 - Docker Compose 1.29+
 - Git
+- **MySQL 8.0+ instalado localmente** (ver [MYSQL_LOCAL_SETUP.md](./MYSQL_LOCAL_SETUP.md))
 
 ### Instalación de Docker en Ubuntu
 
@@ -64,7 +65,19 @@ nano .env
 # - GMAIL_USER y GMAIL_APP_PASSWORD (para notificaciones)
 # - Contraseñas de base de datos si es necesario
 
-# 5. Construir e iniciar servicios
+# 5. Configurar MySQL local (IMPORTANTE)
+# Ver guía completa en MYSQL_LOCAL_SETUP.md
+mysql -u root -pRoot123!
+# Ejecutar:
+# CREATE USER 'naturepharma'@'localhost' IDENTIFIED BY 'Root123!';
+# GRANT ALL PRIVILEGES ON *.* TO 'naturepharma'@'localhost' WITH GRANT OPTION;
+# FLUSH PRIVILEGES;
+# exit
+
+# 6. Crear bases de datos
+mysql -u naturepharma -pRoot123! < database/init/01-create-databases.sql
+
+# 7. Construir e iniciar servicios
 ./deploy.sh build
 ./deploy.sh start
 ```

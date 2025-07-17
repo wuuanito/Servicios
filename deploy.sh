@@ -155,7 +155,8 @@ backup_database() {
     TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
     BACKUP_FILE="$BACKUP_DIR/naturepharma_backup_$TIMESTAMP.sql"
     
-    docker-compose exec mysql mysqldump -u naturepharma -proot --all-databases > "$BACKUP_FILE"
+    # Backup para MySQL local (requiere que MySQL esté instalado localmente)
+    mysqldump -h localhost -u naturepharma -pRoot123! --all-databases > "$BACKUP_FILE"
     
     print_success "Backup creado: $BACKUP_FILE"
 }
@@ -173,7 +174,8 @@ restore_database() {
     fi
     
     print_message "Restaurando backup: $1"
-    docker-compose exec -T mysql mysql -u naturepharma -proot < "$1"
+    # Restore para MySQL local (requiere que MySQL esté instalado localmente)
+    mysql -h localhost -u naturepharma -pRoot123! < "$1"
     print_success "Backup restaurado correctamente"
 }
 

@@ -40,7 +40,7 @@ Sistema completo de microservicios NaturePharma dockerizado para fácil desplieg
 | **Calendar Service** | 3003 | Gestión de calendario y citas |
 | **Laboratorio Service** | 3004 | Gestión de laboratorio |
 | **Solicitudes Service** | 3001 | Gestión de solicitudes y órdenes |
-| **MySQL Database** | 3306 | Base de datos principal |
+| **MySQL Database** | 3306 | Base de datos local (no dockerizada) |
 | **phpMyAdmin** | 8080 | Administración de base de datos |
 | **Nginx** | 80/443 | Proxy reverso y balanceador |
 
@@ -78,7 +78,7 @@ nano .env  # Editar según tus necesidades
 
 ```env
 # Base de datos
-DB_HOST=mysql
+DB_HOST=localhost
 DB_PASSWORD=Root123!
 MYSQL_ROOT_PASSWORD=Root123!
 

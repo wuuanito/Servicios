@@ -319,19 +319,20 @@ sudo netstat -tulpn | grep -E ':(80|443|3001|3003|3004|4001|8080)'
 sudo ufw status
 
 # Verificar conectividad entre contenedores
-docker-compose exec auth-service ping mysql
+# Verificar conectividad a MySQL local
+mysql -h localhost -u naturepharma -pRoot123! -e "SELECT 1"
 ```
 
 ### Problemas de Base de Datos
 ```bash
-# Acceder a MySQL
-docker-compose exec mysql mysql -u naturepharma -p
+# Acceder a MySQL local
+mysql -h localhost -u naturepharma -pRoot123!
 
-# Ver logs de MySQL
-docker-compose logs mysql
+# Ver logs de MySQL local
+sudo journalctl -u mysql.service
 
-# Reiniciar solo MySQL
-docker-compose restart mysql
+# Reiniciar MySQL local
+sudo systemctl restart mysql
 ```
 
 ### Problemas de Permisos
