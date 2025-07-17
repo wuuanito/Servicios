@@ -1,0 +1,784 @@
+{
+	"info": {
+		"_postman_id": "sistema-solicitudes-api",
+		"name": "Sistema de Solicitudes - API Collection",
+		"description": "Colección completa para probar todos los flujos del sistema de solicitudes en tiempo real",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "🏗️ Setup & Configuration",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/",
+							"host": ["{{base_url}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Master Data",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/departamentos/master-data",
+							"host": ["{{base_url}}"],
+							"path": ["api", "departamentos", "master-data"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "📝 Solicitudes - CRUD",
+			"item": [
+				{
+					"name": "Crear Solicitud",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre_solicitante\": \"Juan Pérez\",\n  \"nombre_materia_prima\": \"Extracto de Ginkgo Biloba\",\n  \"lote\": \"LOT-2024-001\",\n  \"proveedor\": \"Proveedor Natural ABC\",\n  \"urgencia_id\": 2,\n  \"codigo_articulo\": \"ART-GNK-001\",\n  \"comentarios\": \"Solicitud para análisis de calidad - Lote crítico\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/solicitudes",
+							"host": ["{{base_url}}"],
+							"path": ["api", "solicitudes"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Todas las Solicitudes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/solicitudes",
+							"host": ["{{base_url}}"],
+							"path": ["api", "solicitudes"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Solicitud por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/solicitudes/{{solicitud_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "solicitudes", "{{solicitud_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Historial de Solicitud",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/solicitudes/{{solicitud_id}}/historial",
+							"host": ["{{base_url}}"],
+							"path": ["api", "solicitudes", "{{solicitud_id}}", "historial"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Estadísticas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/solicitudes/estadisticas",
+							"host": ["{{base_url}}"],
+							"path": ["api", "solicitudes", "estadisticas"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "🔄 Flujo 1: Directo a Expediciones",
+			"item": [
+				{
+					"name": "1. Crear Solicitud",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('solicitud_id', response.data.id);",
+									"    console.log('Solicitud creada con ID:', response.data.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre_solicitante\": \"María García\",\n  \"nombre_materia_prima\": \"Vitamina C\",\n  \"lote\": \"EXP-001\",\n  \"proveedor\": \"Proveedor Express\",\n  \"urgencia_id\": 3,\n  \"codigo_articulo\": \"VIT-C-001\",\n  \"comentarios\": \"Solicitud urgente para expedición directa\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/solicitudes",
+							"host": ["{{base_url}}"],
+							"path": ["api", "solicitudes"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Enviar a Expediciones (Finalizar)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"comentarios\": \"Solicitud procesada y enviada a expediciones\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/solicitudes/{{solicitud_id}}/enviar-expediciones",
+							"host": ["{{base_url}}"],
+							"path": ["api", "solicitudes", "{{solicitud_id}}", "enviar-expediciones"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "🏪 Flujo 2: Vía Almacén",
+			"item": [
+				{
+					"name": "1. Crear Solicitud",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('solicitud_almacen_id', response.data.id);",
+									"    console.log('Solicitud para almacén creada con ID:', response.data.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre_solicitante\": \"Carlos López\",\n  \"nombre_materia_prima\": \"Extracto de Equinácea\",\n  \"lote\": \"ALM-002\",\n  \"proveedor\": \"Proveedor Herbal\",\n  \"urgencia_id\": 2,\n  \"codigo_articulo\": \"ECH-EXT-002\",\n  \"comentarios\": \"Requiere verificación en almacén\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/solicitudes",
+							"host": ["{{base_url}}"],
+							"path": ["api", "solicitudes"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Enviar a Almacén",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"comentarios\": \"Enviado a almacén para verificación de stock\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/solicitudes/{{solicitud_almacen_id}}/enviar-almacen",
+							"host": ["{{base_url}}"],
+							"path": ["api", "solicitudes", "{{solicitud_almacen_id}}", "enviar-almacen"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3a. Crear Necesidad para Laboratorio",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('necesidad_id', response.data.id);",
+									"    console.log('Necesidad creada con ID:', response.data.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"descripcion\": \"Análisis microbiológico completo\",\n  \"urgencia_id\": 3,\n  \"comentarios\": \"Requiere análisis urgente por lote crítico\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/solicitudes/{{solicitud_almacen_id}}/crear-necesidad",
+							"host": ["{{base_url}}"],
+							"path": ["api", "solicitudes", "{{solicitud_almacen_id}}", "crear-necesidad"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4. Completar Necesidad en Laboratorio",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"resultados\": \"Análisis microbiológico: CONFORME. Recuento bacteriano dentro de límites especificados.\",\n  \"observaciones_laboratorio\": \"Muestra analizada según protocolo estándar. Resultados satisfactorios.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/necesidades/{{necesidad_id}}/completar",
+							"host": ["{{base_url}}"],
+							"path": ["api", "necesidades", "{{necesidad_id}}", "completar"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5a. Finalizar desde Almacén",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"comentarios\": \"Análisis completado satisfactoriamente. Solicitud finalizada.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/solicitudes/{{solicitud_almacen_id}}/finalizar",
+							"host": ["{{base_url}}"],
+							"path": ["api", "solicitudes", "{{solicitud_almacen_id}}", "finalizar"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5b. Enviar a Expediciones desde Almacén",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"comentarios\": \"Análisis completado. Enviado a expediciones para despacho.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/solicitudes/{{solicitud_almacen_id}}/enviar-expediciones",
+							"host": ["{{base_url}}"],
+							"path": ["api", "solicitudes", "{{solicitud_almacen_id}}", "enviar-expediciones"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "🧪 Flujo 3: Directo a Laboratorio",
+			"item": [
+				{
+					"name": "1. Crear Solicitud",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('solicitud_lab_id', response.data.id);",
+									"    console.log('Solicitud para laboratorio creada con ID:', response.data.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre_solicitante\": \"Ana Martínez\",\n  \"nombre_materia_prima\": \"Aceite Esencial de Lavanda\",\n  \"lote\": \"LAB-003\",\n  \"proveedor\": \"Proveedor Aromático\",\n  \"urgencia_id\": 3,\n  \"codigo_articulo\": \"LAV-OIL-003\",\n  \"comentarios\": \"Análisis urgente de pureza requerido\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/solicitudes",
+							"host": ["{{base_url}}"],
+							"path": ["api", "solicitudes"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Enviar Directamente a Laboratorio",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"comentarios\": \"Análisis urgente de pureza - Envío directo a laboratorio\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/solicitudes/{{solicitud_lab_id}}/enviar-laboratorio",
+							"host": ["{{base_url}}"],
+							"path": ["api", "solicitudes", "{{solicitud_lab_id}}", "enviar-laboratorio"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3a. Finalizar desde Laboratorio",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"comentarios\": \"Análisis de pureza completado. Resultados: 99.8% pureza. CONFORME.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/necesidades/solicitud/{{solicitud_lab_id}}/finalizar-laboratorio",
+							"host": ["{{base_url}}"],
+							"path": ["api", "necesidades", "solicitud", "{{solicitud_lab_id}}", "finalizar-laboratorio"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3b. Devolver a Almacén desde Laboratorio",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"comentarios\": \"Requiere verificación adicional en almacén antes de finalizar\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/necesidades/solicitud/{{solicitud_lab_id}}/devolver-almacen",
+							"host": ["{{base_url}}"],
+							"path": ["api", "necesidades", "solicitud", "{{solicitud_lab_id}}", "devolver-almacen"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "🧬 Necesidades - CRUD",
+			"item": [
+				{
+					"name": "Obtener Todas las Necesidades",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/necesidades",
+							"host": ["{{base_url}}"],
+							"path": ["api", "necesidades"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Necesidad por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/necesidades/{{necesidad_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "necesidades", "{{necesidad_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Necesidades por Solicitud",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/necesidades/solicitud/{{solicitud_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "necesidades", "solicitud", "{{solicitud_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Necesidad",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"descripcion\": \"Análisis microbiológico y fisicoquímico completo\",\n  \"urgencia_id\": 3,\n  \"comentarios\": \"Actualización: Requiere análisis adicional de metales pesados\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/necesidades/{{necesidad_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "necesidades", "{{necesidad_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reabrir Necesidad",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"motivo\": \"Resultados inconsistentes, requiere re-análisis\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/necesidades/{{necesidad_id}}/reabrir",
+							"host": ["{{base_url}}"],
+							"path": ["api", "necesidades", "{{necesidad_id}}", "reabrir"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Estadísticas de Necesidades",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/necesidades/estadisticas",
+							"host": ["{{base_url}}"],
+							"path": ["api", "necesidades", "estadisticas"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Necesidades Pendientes por Urgencia",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/necesidades/pendientes-urgencia",
+							"host": ["{{base_url}}"],
+							"path": ["api", "necesidades", "pendientes-urgencia"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "📁 Archivos",
+			"item": [
+				{
+					"name": "Subir Archivo a Solicitud",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "archivos",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "solicitud_id",
+									"value": "{{solicitud_id}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/archivos/upload",
+							"host": ["{{base_url}}"],
+							"path": ["api", "archivos", "upload"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Subir Archivo a Necesidad",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "archivos",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "necesidad_id",
+									"value": "{{necesidad_id}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/archivos/upload",
+							"host": ["{{base_url}}"],
+							"path": ["api", "archivos", "upload"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Archivos de Solicitud",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/archivos/solicitud/{{solicitud_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "archivos", "solicitud", "{{solicitud_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Descargar Archivo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/archivos/{{archivo_id}}/download",
+							"host": ["{{base_url}}"],
+							"path": ["api", "archivos", "{{archivo_id}}", "download"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Archivo",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/archivos/{{archivo_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "archivos", "{{archivo_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Estadísticas de Archivos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/archivos/estadisticas",
+							"host": ["{{base_url}}"],
+							"path": ["api", "archivos", "estadisticas"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "🏢 Departamentos & Reportes",
+			"item": [
+				{
+					"name": "Obtener Solicitudes por Departamento",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/departamentos/1/solicitudes",
+							"host": ["{{base_url}}"],
+							"path": ["api", "departamentos", "1", "solicitudes"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Estadísticas por Departamento",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/departamentos/2/estadisticas",
+							"host": ["{{base_url}}"],
+							"path": ["api", "departamentos", "2", "estadisticas"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Dashboard General",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/departamentos/dashboard",
+							"host": ["{{base_url}}"],
+							"path": ["api", "departamentos", "dashboard"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reporte de Flujo entre Departamentos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/departamentos/reporte-flujo?fecha_inicio=2024-01-01&fecha_fin=2024-12-31",
+							"host": ["{{base_url}}"],
+							"path": ["api", "departamentos", "reporte-flujo"],
+							"query": [
+								{
+									"key": "fecha_inicio",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "fecha_fin",
+									"value": "2024-12-31"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3001",
+			"type": "string"
+		},
+		{
+			"key": "solicitud_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "solicitud_almacen_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "solicitud_lab_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "necesidad_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "archivo_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

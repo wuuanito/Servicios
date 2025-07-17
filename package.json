@@ -1,0 +1,30 @@
+{
+  "name": "servicios-microservices",
+  "version": "1.0.0",
+  "description": "Gestión de microservicios con PM2",
+  "main": "start-services.js",
+  "scripts": {
+    "start": "node start-services.js",
+    "start:pm2": "pm2 start ecosystem.config.js",
+    "stop": "pm2 stop all",
+    "restart": "pm2 restart all",
+    "delete": "pm2 delete all",
+    "status": "pm2 status",
+    "logs": "pm2 logs",
+    "monit": "pm2 monit",
+    "reload": "pm2 reload all",
+    "save": "pm2 save",
+    "resurrect": "pm2 resurrect",
+    "startup": "pm2 startup"
+  },
+  "keywords": [
+    "microservices",
+    "pm2",
+    "nodejs",
+    "servicios"
+  ],
+  "author": "Desarrollos",
+  "license": "ISC",
+  "devDependencies": {},
+  "dependencies": {}
+}
