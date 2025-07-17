@@ -14,10 +14,10 @@ CREATE DATABASE IF NOT EXISTS laboratorio_db CHARACTER SET utf8mb4 COLLATE utf8m
 CREATE DATABASE IF NOT EXISTS sistema_solicitudes CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- Otorgar permisos al usuario naturepharma en todas las bases de datos
-GRANT ALL PRIVILEGES ON auth_service_db.* TO 'naturepharma'@'%';
-GRANT ALL PRIVILEGES ON calendar_service_db.* TO 'naturepharma'@'%';
-GRANT ALL PRIVILEGES ON laboratorio_db.* TO 'naturepharma'@'%';
-GRANT ALL PRIVILEGES ON sistema_solicitudes.* TO 'naturepharma'@'%';
+GRANT ALL PRIVILEGES ON auth_service_db.* TO 'naturepharma'@'localhost';
+GRANT ALL PRIVILEGES ON calendar_service_db.* TO 'naturepharma'@'localhost';
+GRANT ALL PRIVILEGES ON laboratorio_db.* TO 'naturepharma'@'localhost';
+GRANT ALL PRIVILEGES ON sistema_solicitudes.* TO 'naturepharma'@'localhost';
 
 -- Aplicar los cambios
 FLUSH PRIVILEGES;
