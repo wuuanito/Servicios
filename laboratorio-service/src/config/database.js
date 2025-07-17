@@ -7,7 +7,7 @@ const sequelize = new Sequelize(
   process.env.DB_USER || 'naturepharma',
   process.env.DB_PASSWORD || 'Root123!',
   {
-    host: process.env.DB_HOST || 'localhost',
+    host: process.env.DB_HOST || '192.168.20.158',
     port: process.env.DB_PORT || 3306,
     dialect: 'mysql',
     logging: process.env.NODE_ENV === 'development' ? console.log : false,

@@ -5,7 +5,7 @@ module.exports = {
     username: process.env.DB_USER || 'naturepharma',
     password: process.env.DB_PASSWORD || 'Root123!',
     database: process.env.DB_NAME || 'calendar_service_db',
-    host: process.env.DB_HOST || 'localhost',
+    host: process.env.DB_HOST || '192.168.20.158',
     port: process.env.DB_PORT || 3306,
     dialect: 'mysql',
     logging: console.log
@@ -14,7 +14,7 @@ module.exports = {
     username: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || 'Root123!',
     database: process.env.DB_NAME_TEST || 'calendar_service_test',
-    host: process.env.DB_HOST || 'localhost',
+    host: process.env.DB_HOST || '192.168.20.158',
     port: process.env.DB_PORT || 3306,
     dialect: 'mysql',
     logging: false
