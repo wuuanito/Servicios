@@ -2,12 +2,12 @@ const { Sequelize } = require('sequelize');
 require('dotenv').config(); // Asegúrate que las variables de entorno estén cargadas
 
 const sequelize = new Sequelize(
-  'calendar_service_db', // Database name
-  'naturepharma', // Username
-  'root', // Password
+  process.env.DB_NAME || 'calendar_service_db', // Database name
+  process.env.DB_USER || 'naturepharma', // Username
+  process.env.DB_PASSWORD || 'Root123!', // Password
   {
-    host: 'localhost',
-    port: 3306,
+    host: process.env.DB_HOST || '192.168.20.158',
+    port: process.env.DB_PORT || 3306,
     dialect: 'mysql',
     logging: process.env.NODE_ENV === 'development' ? console.log : false, // Log queries en desarrollo
     pool: {
