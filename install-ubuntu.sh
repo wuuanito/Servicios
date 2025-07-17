@@ -133,8 +133,8 @@ if [ ! -f ".env" ]; then
     
     # Actualizar .env
     sed -i "s/your-super-secret-jwt-key-here/$JWT_SECRET/g" .env
-    sed -i "s/naturepharma123/$DB_PASSWORD/g" .env
-    sed -i "s/rootpassword123/$ROOT_PASSWORD/g" .env
+    sed -i "s/Root123!/$DB_PASSWORD/g" .env
+    sed -i "s/Root123!/$ROOT_PASSWORD/g" .env
     sed -i "s/localhost/$DOMAIN/g" .env
     sed -i "s/tu-email@gmail.com/$EMAIL/g" .env
     

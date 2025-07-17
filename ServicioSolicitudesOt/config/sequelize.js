@@ -5,7 +5,7 @@ require('dotenv').config();
 const sequelize = new Sequelize(
   process.env.DB_NAME || 'sistema_solicitudes',
   process.env.DB_USER || 'naturepharma',
-  process.env.DB_PASSWORD || 'root',
+  process.env.DB_PASSWORD || 'Root123!',
   {
     host: process.env.DB_HOST || 'localhost',
     port: process.env.DB_PORT || 3306,

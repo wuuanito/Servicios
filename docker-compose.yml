@@ -8,10 +8,10 @@ services:
     ports:
       - "3306:3306"
     environment:
-      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_ROOT_PASSWORD=Root123!
       - MYSQL_DATABASE=naturepharma_db
       - MYSQL_USER=naturepharma
-      - MYSQL_PASSWORD=root
+      - MYSQL_PASSWORD=Root123!
     volumes:
       - mysql_data:/var/lib/mysql
       - ./database/init:/docker-entrypoint-initdb.d:ro
@@ -33,7 +33,7 @@ services:
       - DB_PORT=3306
       - DB_NAME=auth_service_db
       - DB_USER=naturepharma
-      - DB_PASSWORD=root
+      - DB_PASSWORD=Root123!
       - JWT_SECRET=your_super_secret_jwt_key_here
       - JWT_EXPIRES_IN=24h
     depends_on:
@@ -57,7 +57,7 @@ services:
       - DB_PORT=3306
       - DB_NAME=calendar_service_db
       - DB_USER=naturepharma
-      - DB_PASSWORD=root
+      - DB_PASSWORD=Root123!
       - GMAIL_USER=${GMAIL_USER}
       - GMAIL_APP_PASSWORD=${GMAIL_APP_PASSWORD}
     depends_on:
@@ -79,7 +79,7 @@ services:
       - DB_PORT=3306
       - DB_NAME=laboratorio_db
       - DB_USER=naturepharma
-      - DB_PASSWORD=root
+      - DB_PASSWORD=Root123!
       - FRONTEND_URL=http://localhost:3000
       - BASE_URL=http://localhost:3004
     depends_on:
@@ -103,7 +103,7 @@ services:
       - DB_PORT=3306
       - DB_NAME=sistema_solicitudes
       - DB_USER=naturepharma
-      - DB_PASSWORD=root
+      - DB_PASSWORD=Root123!
     depends_on:
       - mysql
     volumes:
@@ -122,8 +122,8 @@ services:
       - PMA_HOST=mysql
       - PMA_PORT=3306
       - PMA_USER=naturepharma
-      - PMA_PASSWORD=root
-      - MYSQL_ROOT_PASSWORD=root_password
+      - PMA_PASSWORD=Root123!
+      - MYSQL_ROOT_PASSWORD=Root123!
     depends_on:
       - mysql
     networks:

@@ -79,8 +79,8 @@ nano .env  # Editar según tus necesidades
 ```env
 # Base de datos
 DB_HOST=mysql
-DB_PASSWORD=tu_password_seguro
-MYSQL_ROOT_PASSWORD=tu_root_password_seguro
+DB_PASSWORD=Root123!
+MYSQL_ROOT_PASSWORD=Root123!
 
 # JWT
 JWT_SECRET=tu_jwt_secret_muy_seguro

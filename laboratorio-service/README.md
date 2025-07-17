@@ -44,7 +44,7 @@ Microservicio para la gestión de defectos de fabricación en el laboratorio de 
    DB_PORT=3306
    DB_NAME=laboratorio_db
    DB_USER=laboratorio_user
-   DB_PASSWORD=laboratorio_password
+   DB_PASSWORD=Root123!
    FRONTEND_URL=http://localhost:3000
    BASE_URL=http://localhost:3003
    ```
@@ -154,7 +154,7 @@ Content-Type: multipart/form-data
 | `DB_PORT` | Puerto de MySQL | 3306 |
 | `DB_NAME` | Nombre de la base de datos | laboratorio_db |
 | `DB_USER` | Usuario de MySQL | laboratorio_user |
-| `DB_PASSWORD` | Contraseña de MySQL | laboratorio_password |
+| `DB_PASSWORD` | Contraseña de MySQL | Root123! |
 | `FRONTEND_URL` | URL del frontend para CORS | http://localhost:3000 |
 | `BASE_URL` | URL base del servicio | http://localhost:3003 |
 
@@ -228,7 +228,7 @@ services:
       - DB_PORT=3306
       - DB_NAME=laboratorio_db
       - DB_USER=laboratorio_user
-      - DB_PASSWORD=laboratorio_password
+      - DB_PASSWORD=Root123!
     depends_on:
       - mysql
     volumes:
@@ -239,10 +239,10 @@ services:
     ports:
       - "3306:3306"
     environment:
-      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_ROOT_PASSWORD=Root123!
       - MYSQL_DATABASE=laboratorio_db
       - MYSQL_USER=laboratorio_user
-      - MYSQL_PASSWORD=laboratorio_password
+      - MYSQL_PASSWORD=Root123!
     volumes:
       - mysql_data:/var/lib/mysql
       - ./scripts/init-mysql.sql:/docker-entrypoint-initdb.d/init-mysql.sql:ro
@@ -255,7 +255,7 @@ services:
     environment:
       - PMA_HOST=mysql
       - PMA_USER=laboratorio_user
-      - PMA_PASSWORD=laboratorio_password
+      - PMA_PASSWORD=Root123!
     depends_on:
       - mysql
 

@@ -88,8 +88,8 @@ nano .env
 JWT_SECRET=$(openssl rand -base64 32)
 
 # Base de datos - CAMBIAR CONTRASEÑAS
-DB_PASSWORD=contraseña_muy_segura_aqui
-MYSQL_ROOT_PASSWORD=otra_contraseña_muy_segura
+DB_PASSWORD=Root123!
+MYSQL_ROOT_PASSWORD=Root123!
 
 # Email para notificaciones
 GMAIL_USER=tu-email@gmail.com

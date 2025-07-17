@@ -140,8 +140,8 @@ Asegúrate de configurar estas variables en el archivo `.env`:
 JWT_SECRET=tu_clave_super_secreta_aqui_minimo_32_caracteres
 
 # Base de datos - CAMBIAR CONTRASEÑAS EN PRODUCCIÓN
-DB_PASSWORD=contraseña_segura
-MYSQL_ROOT_PASSWORD=contraseña_root_segura
+DB_PASSWORD=Root123!
+MYSQL_ROOT_PASSWORD=Root123!
 
 # Email para notificaciones
 GMAIL_USER=tu-email@gmail.com
