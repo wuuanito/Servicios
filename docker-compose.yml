@@ -149,8 +149,8 @@ services:
       - naturepharma-network
     restart: unless-stopped
 
-volumes:
-  # mysql_data:  # Comentado porque ahora usa MySQL local
+# volumes:  # Sección comentada porque no se usan volúmenes con MySQL local
+  # mysql_data:
     # driver: local
 
 networks:
