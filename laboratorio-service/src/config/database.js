@@ -5,9 +5,9 @@ require('dotenv').config();
 const sequelize = new Sequelize(
   'laboratorio_db',
   'naturepharma',
-  'root',
+  'Root123!',
   {
-    host: process.env.DB_HOST || 'localhost',
+    host: process.env.DB_HOST || '192.168.20.158',
     port: process.env.DB_PORT || 3306,
     dialect: 'mysql',
     logging: process.env.NODE_ENV === 'development' ? console.log : false,
