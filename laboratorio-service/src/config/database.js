@@ -3,9 +3,9 @@ require('dotenv').config();
 
 // Configuración de la base de datos
 const sequelize = new Sequelize(
-  process.env.DB_NAME || 'laboratorio_db',
-  process.env.DB_USER || 'root',
-  process.env.DB_PASSWORD || '',
+  'laboratorio_db',
+  'naturepharma',
+  'root',
   {
     host: process.env.DB_HOST || 'localhost',
     port: process.env.DB_PORT || 3306,
