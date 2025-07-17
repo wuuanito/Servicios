@@ -1,153 +1,301 @@
-# Gestión de Microservicios con PM2
+# NaturePharma - Microservicios Dockerizados
 
-Este proyecto contiene 3 microservicios que se pueden gestionar fácilmente usando PM2.
+## 🏗️ Arquitectura del Sistema
 
-## Servicios Incluidos
+Este proyecto contiene una suite completa de microservicios para NaturePharma, completamente dockerizada y lista para desplegar en servidor Ubuntu.
 
-1. **ServicioSolicitudesOt** - Puerto 3003
-2. **calendar-service** - Puerto 3004
-3. **laboratorio-service** - Puerto 3005
+### Servicios Incluidos
 
-## Instalación
+- **Auth Service** (Puerto 4001) - Autenticación y autorización
+- **Calendar Service** (Puerto 3003) - Gestión de calendario y eventos
+- **Laboratorio Service** (Puerto 3004) - Gestión de defectos de fabricación y tareas
+- **Solicitudes Service** (Puerto 3001) - Sistema de solicitudes en tiempo real
+- **MySQL Database** (Puerto 3306) - Base de datos compartida
+- **phpMyAdmin** (Puerto 8080) - Interfaz web para administración de BD
+- **Nginx** (Puerto 80/443) - Reverse proxy y API Gateway
 
-PM2 ya está instalado globalmente. Si necesitas reinstalarlo:
+## 🚀 Despliegue Rápido
+
+### Prerrequisitos
+
+- Ubuntu Server 18.04+ o similar
+- Docker 20.10+
+- Docker Compose 1.29+
+- Git
+
+### Instalación de Docker en Ubuntu
 
 ```bash
-npm install -g pm2
+# Actualizar sistema
+sudo apt update && sudo apt upgrade -y
+
+# Instalar Docker
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+
+# Agregar usuario al grupo docker
+sudo usermod -aG docker $USER
+
+# Instalar Docker Compose
+sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+# Reiniciar sesión para aplicar cambios de grupo
+newgrp docker
 ```
 
-## Comandos Disponibles
+### Despliegue del Sistema
 
-### Inicio Rápido
 ```bash
-# Iniciar todos los servicios
-npm start
+# 1. Clonar el repositorio
+git clone <URL_DEL_REPOSITORIO>
+cd Servicios
 
-# O directamente con PM2
-pm2 start ecosystem.config.js
+# 2. Hacer ejecutable el script de despliegue
+chmod +x deploy.sh
+
+# 3. Configuración inicial
+./deploy.sh setup
+
+# 4. Editar variables de entorno (IMPORTANTE)
+nano .env
+# Configurar especialmente:
+# - JWT_SECRET (cambiar por una clave segura)
+# - GMAIL_USER y GMAIL_APP_PASSWORD (para notificaciones)
+# - Contraseñas de base de datos si es necesario
+
+# 5. Construir e iniciar servicios
+./deploy.sh build
+./deploy.sh start
 ```
 
-### Gestión de Servicios
+## 🔧 Gestión del Sistema
+
+### Comandos Principales
+
 ```bash
-# Ver estado de todos los servicios
-npm run status
-# o
-pm2 status
+# Ver estado de servicios
+./deploy.sh status
 
-# Detener todos los servicios
-npm run stop
-# o
-pm2 stop all
-
-# Reiniciar todos los servicios
-npm run restart
-# o
-pm2 restart all
-
-# Eliminar todos los servicios de PM2
-npm run delete
-# o
-pm2 delete all
-```
-
-### Monitoreo y Logs
-```bash
-# Ver logs en tiempo real
-npm run logs
-# o
-pm2 logs
-
-# Monitor interactivo
-npm run monit
-# o
-pm2 monit
+# Ver logs de todos los servicios
+./deploy.sh logs
 
 # Ver logs de un servicio específico
-pm2 logs solicitudes-service
-pm2 logs calendar-service
-pm2 logs laboratorio-service
+./deploy.sh logs auth-service
+
+# Actualizar servicios (después de cambios en código)
+./deploy.sh update
+
+# Reiniciar servicios
+./deploy.sh restart
+
+# Detener servicios
+./deploy.sh stop
+
+# Limpiar recursos Docker
+./deploy.sh cleanup
 ```
 
-### Gestión Individual de Servicios
+### Backup y Restauración
+
 ```bash
-# Iniciar un servicio específico
-pm2 start solicitudes-service
-pm2 start calendar-service
-pm2 start laboratorio-service
+# Crear backup de la base de datos
+./deploy.sh backup
 
-# Detener un servicio específico
-pm2 stop solicitudes-service
-pm2 stop calendar-service
-pm2 stop laboratorio-service
-
-# Reiniciar un servicio específico
-pm2 restart solicitudes-service
-pm2 restart calendar-service
-pm2 restart laboratorio-service
+# Restaurar backup
+./deploy.sh restore backups/naturepharma_backup_20240101_120000.sql
 ```
 
-### Configuración de Inicio Automático
+## 🌐 Acceso a los Servicios
+
+Una vez desplegado, los servicios estarán disponibles en:
+
+- **API Gateway (Nginx)**: `http://tu-servidor/`
+- **Auth Service**: `http://tu-servidor:4001`
+- **Calendar Service**: `http://tu-servidor:3003`
+- **Laboratorio Service**: `http://tu-servidor:3004`
+- **Solicitudes Service**: `http://tu-servidor:3001`
+- **phpMyAdmin**: `http://tu-servidor:8080`
+
+### Rutas de API a través del Gateway
+
+- **Autenticación**: `http://tu-servidor/api/auth/*`
+- **Eventos**: `http://tu-servidor/api/events/*`
+- **Laboratorio**: `http://tu-servidor/api/laboratorio/*`
+- **Solicitudes**: `http://tu-servidor/api/solicitudes/*`
+- **Necesidades**: `http://tu-servidor/api/necesidades/*`
+- **Archivos**: `http://tu-servidor/api/archivos/*`
+- **Departamentos**: `http://tu-servidor/api/departamentos/*`
+- **Chat**: `http://tu-servidor/api/chat/*`
+- **Auditoría**: `http://tu-servidor/api/auditoria/*`
+
+## 🔒 Configuración de Seguridad
+
+### Variables de Entorno Críticas
+
+Asegúrate de configurar estas variables en el archivo `.env`:
+
+```env
+# JWT - CAMBIAR EN PRODUCCIÓN
+JWT_SECRET=tu_clave_super_secreta_aqui_minimo_32_caracteres
+
+# Base de datos - CAMBIAR CONTRASEÑAS EN PRODUCCIÓN
+DB_PASSWORD=contraseña_segura
+MYSQL_ROOT_PASSWORD=contraseña_root_segura
+
+# Email para notificaciones
+GMAIL_USER=tu-email@gmail.com
+GMAIL_APP_PASSWORD=tu-app-password-de-gmail
+```
+
+### Configuración HTTPS (Opcional)
+
+Para habilitar HTTPS:
+
+1. Coloca tus certificados SSL en `nginx/ssl/`:
+   ```
+   nginx/ssl/cert.pem
+   nginx/ssl/key.pem
+   ```
+
+2. Modifica `nginx/nginx.conf` para incluir configuración SSL
+
+3. Reinicia los servicios:
+   ```bash
+   ./deploy.sh restart
+   ```
+
+## 📊 Monitoreo y Logs
+
+### Ver Logs en Tiempo Real
+
 ```bash
-# Guardar configuración actual
-pm2 save
+# Todos los servicios
+docker-compose logs -f
 
-# Configurar inicio automático del sistema
-pm2 startup
+# Servicio específico
+docker-compose logs -f auth-service
 
-# Restaurar servicios guardados
-pm2 resurrect
+# Últimas 100 líneas
+docker-compose logs --tail=100 calendar-service
 ```
 
-## Configuración
+### Verificar Estado de Contenedores
 
-La configuración de PM2 se encuentra en `ecosystem.config.js`. Puedes modificar:
+```bash
+# Estado de contenedores
+docker-compose ps
 
-- Puertos de los servicios
-- Variables de entorno
-- Número de instancias
-- Límites de memoria
-- Configuraciones de desarrollo/producción
+# Uso de recursos
+docker stats
 
-## Estructura de Archivos
+# Información detallada de un contenedor
+docker inspect naturepharma-mysql
+```
+
+## 🔄 Actualización del Sistema
+
+### Actualización de Código
+
+```bash
+# 1. Hacer pull de los cambios
+git pull origin main
+
+# 2. Actualizar servicios
+./deploy.sh update
+```
+
+### Actualización de Dependencias
+
+```bash
+# 1. Actualizar package.json en cada servicio
+# 2. Reconstruir imágenes
+./deploy.sh build
+
+# 3. Reiniciar servicios
+./deploy.sh restart
+```
+
+## 🐛 Solución de Problemas
+
+### Problemas Comunes
+
+1. **Error de conexión a base de datos**:
+   ```bash
+   # Verificar que MySQL esté corriendo
+   docker-compose ps mysql
+   
+   # Ver logs de MySQL
+   docker-compose logs mysql
+   ```
+
+2. **Puerto ya en uso**:
+   ```bash
+   # Verificar qué proceso usa el puerto
+   sudo netstat -tulpn | grep :3001
+   
+   # Cambiar puerto en docker-compose.yml si es necesario
+   ```
+
+3. **Problemas de permisos**:
+   ```bash
+   # Verificar permisos de directorios
+   ls -la uploads/
+   
+   # Corregir permisos si es necesario
+   sudo chown -R $USER:$USER uploads/
+   ```
+
+### Comandos de Diagnóstico
+
+```bash
+# Verificar conectividad entre contenedores
+docker-compose exec auth-service ping mysql
+
+# Acceder a un contenedor
+docker-compose exec auth-service bash
+
+# Verificar logs de un servicio específico
+docker-compose logs --tail=50 laboratorio-service
+```
+
+## 📁 Estructura del Proyecto
 
 ```
 Servicios/
-├── ecosystem.config.js     # Configuración de PM2
-├── start-services.js       # Script de inicio automatizado
-├── package.json           # Scripts npm para gestión
-├── README.md             # Esta documentación
-├── ServicioSolicitudesOt/ # Servicio de solicitudes
-├── calendar-service/      # Servicio de calendario
-└── laboratorio-service/   # Servicio de laboratorio
+├── auth-service/           # Servicio de autenticación
+├── calendar-service/       # Servicio de calendario
+├── laboratorio-service/    # Servicio de laboratorio
+├── ServicioSolicitudesOt/  # Servicio de solicitudes
+├── nginx/                  # Configuración de Nginx
+├── database/               # Scripts de inicialización de BD
+├── docker-compose.yml      # Orquestación de servicios
+├── .env.example           # Variables de entorno de ejemplo
+├── deploy.sh              # Script de despliegue
+└── README.md              # Este archivo
 ```
 
-## Comandos Útiles de PM2
+## 🤝 Contribución
 
-```bash
-# Ver información detallada
-pm2 show <service-name>
+Para contribuir al proyecto:
 
-# Recargar sin downtime (solo para aplicaciones que lo soporten)
-pm2 reload all
+1. Fork el repositorio
+2. Crea una rama para tu feature (`git checkout -b feature/nueva-funcionalidad`)
+3. Commit tus cambios (`git commit -am 'Agregar nueva funcionalidad'`)
+4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
+5. Crea un Pull Request
 
-# Flush logs
-pm2 flush
+## 📞 Soporte
 
-# Ver métricas en tiempo real
-pm2 monit
+Para soporte técnico:
 
-# Listar todos los procesos
-pm2 list
-```
+1. Revisa los logs: `./deploy.sh logs`
+2. Verifica el estado: `./deploy.sh status`
+3. Consulta la documentación de cada servicio individual
+4. Crea un issue en el repositorio con detalles del problema
 
-## Solución de Problemas
+---
 
-1. **Servicios no inician**: Verifica que las dependencias estén instaladas en cada servicio
-2. **Puertos ocupados**: Cambia los puertos en `ecosystem.config.js`
-3. **Errores de permisos**: Ejecuta como administrador si es necesario
-4. **Logs no aparecen**: Usa `pm2 flush` para limpiar logs antiguos
+**NaturePharma** - Sistema de Microservicios Dockerizado
 
-## Entornos
-
-- **Desarrollo**: `pm2 start ecosystem.config.js`
-- **Producción**: `pm2 start ecosystem.config.js --env production`
+*Última actualización: $(date +'%Y-%m-%d')*
