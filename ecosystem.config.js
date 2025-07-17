@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'solicitudes-service',
-      script: './ServicioSolicitudesOt/server.js',
+      script: 'server.js',
       cwd: './ServicioSolicitudesOt',
       instances: 1,
       autorestart: true,
@@ -19,7 +19,7 @@ module.exports = {
     },
     {
       name: 'calendar-service',
-      script: './calendar-service/src/main.js',
+      script: 'src/main.js',
       cwd: './calendar-service',
       instances: 1,
       autorestart: true,
@@ -36,7 +36,7 @@ module.exports = {
     },
     {
       name: 'laboratorio-service',
-      script: './laboratorio-service/src/app.js',
+      script: 'src/app.js',
       cwd: './laboratorio-service',
       instances: 1,
       autorestart: true,
