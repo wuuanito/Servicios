@@ -1,36 +1,30 @@
 version: '3.8'
 
 services:
-  # Servicio de laboratorio
   laboratorio-service:
     build: .
     container_name: laboratorio-service
     ports:
       - "3004:3004"
     environment:
-      - NODE_ENV=development
-      - PORT=3004
-      - DB_HOST=mysql
+      - NODE_ENV=production
+      - DB_HOST=192.168.20.158
       - DB_PORT=3306
-      - DB_NAME=laboratorio_db
-      - DB_USER=laboratorio_user
+      - DB_NAME=naturepharma
+      - DB_USER=naturepharma
       - DB_PASSWORD=Root123!
-      - FRONTEND_URL=http://localhost:5173
+      - PORT=3004
+      - FRONTEND_URL=http://localhost:3000
       - BASE_URL=http://192.168.20.158:3004
-      - MAX_FILE_SIZE=5242880
-      - UPLOAD_PATH=/app/uploads/defectos
-    depends_on:
-      - mysql
     volumes:
-      - ./uploads:/app/uploads:rw
-      - ./src:/app/src:ro
+      - ./uploads:/app/uploads
+      - ./src:/app/src
     networks:
       - laboratorio-network
     restart: unless-stopped
-    tmpfs:
-      - /tmp
+    depends_on:
+      - mysql
 
-  # Base de datos MySQL
   mysql:
     image: mysql:8.0
     container_name: laboratorio-mysql
@@ -38,18 +32,16 @@ services:
       - "3306:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=Root123!
-      - MYSQL_DATABASE=laboratorio_db
-      - MYSQL_USER=laboratorio_user
+      - MYSQL_DATABASE=naturepharma
+      - MYSQL_USER=naturepharma
       - MYSQL_PASSWORD=Root123!
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./scripts/init-mysql.sql:/docker-entrypoint-initdb.d/init-mysql.sql:ro
+      - ./scripts:/docker-entrypoint-initdb.d
     networks:
       - laboratorio-network
     restart: unless-stopped
-    command: --default-authentication-plugin=mysql_native_password
 
-  # phpMyAdmin (Interfaz web para MySQL)
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
     container_name: laboratorio-phpmyadmin
@@ -58,7 +50,7 @@ services:
     environment:
       - PMA_HOST=mysql
       - PMA_PORT=3306
-      - PMA_USER=laboratorio_user
+      - PMA_USER=root
       - PMA_PASSWORD=Root123!
       - MYSQL_ROOT_PASSWORD=Root123!
     depends_on:

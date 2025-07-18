@@ -4,11 +4,9 @@
   "description": "Microservicio para gestión de defectos de fabricación en laboratorio",
   "main": "src/app.js",
   "scripts": {
-    "start": "node fix-permissions.js && node src/app.js",
-    "start:safe": "node src/app.js",
-    "dev": "node fix-permissions.js && nodemon src/app.js",
-    "test": "jest",
-    "fix-permissions": "node fix-permissions.js"
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "test": "jest"
   },
   "keywords": [
     "laboratorio",
