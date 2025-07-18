@@ -6,6 +6,18 @@ const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
+// Change user password (admin/director only)
+router.patch(
+  '/:id/change-password',
+  [
+    param('id').isInt({ min: 1 }).withMessage('User ID must be a positive integer'),
+    body('newPassword').isLength({ min: 6 }).withMessage('New password must be at least 6 characters long'),
+    validateRequest
+  ],
+  authMiddleware,
+  userController.changeUserPassword
+);
+
 // Get all users (admin only)
 router.get(
   '/',
@@ -24,11 +36,12 @@ router.get(
   userController.getUserById
 );
 
-// Update user (admin or self)
+// Update user complete profile (admin/director or self)
 router.put(
   '/:id',
   [
     param('id').isInt({ min: 1 }).withMessage('User ID must be a positive integer'),
+    body('username').optional().isString().isLength({ min: 3, max: 50 }).withMessage('Username must be between 3 and 50 characters'),
     body('firstName').optional().isString().isLength({ min: 1, max: 50 }).withMessage('First name must be between 1 and 50 characters'),
     body('lastName').optional().isString().isLength({ min: 1, max: 50 }).withMessage('Last name must be between 1 and 50 characters'),
     body('email').optional().isEmail().withMessage('Must be a valid email address'),
@@ -52,6 +65,7 @@ router.put(
       'director', 'administrador', 'empleado'
     ]).withMessage('Invalid role'),
     body('jobTitle').optional().isString().isLength({ max: 100 }).withMessage('Job title must be a string with max 100 characters'),
+    body('isActive').optional().isBoolean().withMessage('isActive must be a boolean value'),
     validateRequest
   ],
   authMiddleware,

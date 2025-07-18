@@ -1,13 +1,13 @@
 const userService = require('../services/user.service');
 const { formatResponse } = require('../utils/response-formatter');
 
-// Get all users (admin only)
+// Get all users with complete information (admin/director only)
 const getAllUsers = async (req, res, next) => {
   try {
-    // Check if user is admin
-    if (req.user.role !== 'admin') {
+    // Check if user is admin or director
+    if (req.user.role !== 'administrador' && req.user.role !== 'director') {
       return res.status(403).json({ 
-        error: 'Forbidden - Admin access required' 
+        error: 'Forbidden - Admin or Director access required' 
       });
     }
     
@@ -21,8 +21,11 @@ const getAllUsers = async (req, res, next) => {
         firstName: user.firstName,
         lastName: user.lastName,
         role: user.role,
+        department: user.department,
+        jobTitle: user.jobTitle,
         isActive: user.isActive,
         createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
         lastLogin: user.lastLogin
       }))
     ));
@@ -67,12 +70,11 @@ const getUserById = async (req, res, next) => {
   }
 };
 
-// Update user (admin or self)
-// auth-service/src/controllers/user.controller.js (actualizar función updateUser)
+// Update user complete profile (admin/director or self)
 const updateUser = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { firstName, lastName, email, department, role, jobTitle } = req.body;
+    const { firstName, lastName, email, department, role, jobTitle, username, isActive } = req.body;
     
     // Check if user is administrador/director or updating their own profile
     if (req.user.role !== 'administrador' && req.user.role !== 'director' && req.user.id !== parseInt(id, 10)) {
@@ -89,16 +91,31 @@ const updateUser = async (req, res, next) => {
       });
     }
     
-    // Solo los administradores y directores pueden cambiar el departamento y rol
+    // Base data that anyone can update on their own profile
     let updateData = { firstName, lastName, email };
+    
+    // Admins and directors can update more fields
     if (req.user.role === 'administrador' || req.user.role === 'director') {
-      updateData = { ...updateData, department, jobTitle };
+      updateData = { 
+        ...updateData, 
+        department, 
+        jobTitle,
+        username,
+        isActive
+      };
       
-      // Solo directores pueden cambiar el rol
+      // Only directors can change roles
       if (req.user.role === 'director') {
         updateData.role = role;
       }
     }
+    
+    // Remove undefined values
+    Object.keys(updateData).forEach(key => {
+      if (updateData[key] === undefined) {
+        delete updateData[key];
+      }
+    });
     
     // Update user
     const updatedUser = await userService.updateUser(id, updateData);
@@ -111,8 +128,50 @@ const updateUser = async (req, res, next) => {
       lastName: updatedUser.lastName,
       role: updatedUser.role,
       department: updatedUser.department,
-      jobTitle: updatedUser.jobTitle
+      jobTitle: updatedUser.jobTitle,
+      isActive: updatedUser.isActive,
+      updatedAt: updatedUser.updatedAt
     }, 'User updated successfully'));
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Change user password (admin/director only)
+const changeUserPassword = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { newPassword } = req.body;
+    
+    // Check if user is admin or director
+    if (req.user.role !== 'administrador' && req.user.role !== 'director') {
+      return res.status(403).json({ 
+        error: 'Forbidden - Admin or Director access required' 
+      });
+    }
+    
+    // Validate password
+    if (!newPassword || newPassword.length < 6) {
+      return res.status(400).json({ 
+        error: 'Password must be at least 6 characters long' 
+      });
+    }
+    
+    // Check if user exists
+    const user = await userService.findById(id);
+    if (!user) {
+      return res.status(404).json({ 
+        error: 'User not found' 
+      });
+    }
+    
+    // Update password
+    await userService.updatePassword(id, newPassword);
+    
+    return res.status(200).json(formatResponse(
+      null,
+      'Password updated successfully'
+    ));
   } catch (error) {
     next(error);
   }
@@ -195,6 +254,7 @@ module.exports = {
   getAllUsers,
   getUserById,
   updateUser,
+  changeUserPassword,
   deleteUser,
   updateUserRole
 };
