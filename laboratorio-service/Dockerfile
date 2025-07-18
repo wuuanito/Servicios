@@ -15,19 +15,22 @@ COPY package*.json ./
 # Instalar dependencias
 RUN npm ci --only=production && npm cache clean --force
 
-# Copiar código fuente
-COPY . .
-
-# Crear directorio para uploads
-RUN mkdir -p uploads/defectos
-
 # Crear usuario no-root para seguridad
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S laboratorio -u 1001
 
-# Cambiar permisos del directorio uploads
-RUN chown -R laboratorio:nodejs uploads
-RUN chmod -R 755 uploads
+# Copiar código fuente
+COPY . .
+
+# Copiar y dar permisos al script de inicialización
+COPY init-container.sh /usr/local/bin/init-container.sh
+RUN chmod +x /usr/local/bin/init-container.sh
+
+# Crear directorio para uploads con permisos correctos
+RUN mkdir -p /app/uploads/defectos
+RUN chown -R laboratorio:nodejs /app
+RUN chmod -R 755 /app
+RUN chmod -R 775 /app/uploads
 
 # Cambiar a usuario no-root
 USER laboratorio
@@ -43,5 +46,6 @@ ENV PORT=3004
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD node healthcheck.js
 
-# Comando para iniciar la aplicación
+# Comando para iniciar la aplicación con script de inicialización
+ENTRYPOINT ["/usr/local/bin/init-container.sh"]
 CMD ["npm", "start"]

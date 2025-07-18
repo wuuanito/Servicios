@@ -6,25 +6,30 @@ services:
     build: .
     container_name: laboratorio-service
     ports:
-      - "3003:3003"
+      - "3004:3004"
     environment:
       - NODE_ENV=development
-      - PORT=3003
+      - PORT=3004
       - DB_HOST=mysql
       - DB_PORT=3306
       - DB_NAME=laboratorio_db
       - DB_USER=laboratorio_user
       - DB_PASSWORD=Root123!
-      - FRONTEND_URL=http://localhost:3000
-      - BASE_URL=http://localhost:3004
+      - FRONTEND_URL=http://localhost:5173
+      - BASE_URL=http://192.168.20.158:3004
+      - MAX_FILE_SIZE=5242880
+      - UPLOAD_PATH=/app/uploads/defectos
     depends_on:
       - mysql
     volumes:
-      - ./uploads:/app/uploads
-      - ./src:/app/src
+      - ./uploads:/app/uploads:rw
+      - ./src:/app/src:ro
     networks:
       - laboratorio-network
     restart: unless-stopped
+    user: "1001:1001"
+    tmpfs:
+      - /tmp
 
   # Base de datos MySQL
   mysql:
