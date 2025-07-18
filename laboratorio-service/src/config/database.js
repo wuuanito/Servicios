@@ -30,11 +30,13 @@ const connectDB = async () => {
     await sequelize.authenticate();
     console.log('📦 MySQL conectado exitosamente');
     
-    // Sincronizar modelos en desarrollo
-    if (process.env.NODE_ENV === 'development') {
-      await sequelize.sync({ alter: true });
-      console.log('📦 Modelos sincronizados con la base de datos');
-    }
+    // Verificar conexión a la base de datos
+    const [results] = await sequelize.query('SELECT DATABASE() as db_name');
+    console.log('📦 Base de datos actual:', results[0].db_name);
+    
+    // Verificar si las tablas existen
+    const [tables] = await sequelize.query('SHOW TABLES');
+    console.log('📦 Tablas existentes:', tables.map(t => Object.values(t)[0]));
 
     // Manejo de cierre graceful
     process.on('SIGINT', async () => {
@@ -45,6 +47,7 @@ const connectDB = async () => {
 
   } catch (error) {
     console.error('❌ Error conectando a MySQL:', error.message);
+    console.error('❌ Stack trace:', error.stack);
     process.exit(1);
   }
 };

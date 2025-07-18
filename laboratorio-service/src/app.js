@@ -8,6 +8,7 @@ const path = require('path');
 require('dotenv').config();
 
 const { connectDB } = require('./config/database');
+const { syncModels } = require('./models');
 const defectosRoutes = require('./routes/defectos');
 const tareasRoutes = require('./routes/tareas');
 const errorHandler = require('./middleware/errorHandler');
@@ -15,8 +16,36 @@ const errorHandler = require('./middleware/errorHandler');
 const app = express();
 const PORT = process.env.PORT || 3005;
 
-// Conectar a la base de datos
-connectDB();
+// Conectar a la base de datos y sincronizar modelos
+const initializeDatabase = async () => {
+  try {
+    console.log('🚀 Iniciando conexión a la base de datos...');
+    await connectDB();
+    
+    console.log('🔄 Sincronizando modelos...');
+    // Sincronizar modelos (crear tablas si no existen)
+    await syncModels({ 
+      alter: true, // Siempre permitir alteraciones de estructura
+      force: false // No recrear tablas existentes
+    });
+    
+    console.log('🎯 Base de datos inicializada correctamente');
+  } catch (error) {
+    console.error('❌ Error inicializando base de datos:', error.message);
+    console.error('❌ Stack trace completo:', error.stack);
+    console.error('❌ Detalles del error:', {
+      name: error.name,
+      code: error.code,
+      errno: error.errno,
+      sqlState: error.sqlState,
+      sqlMessage: error.sqlMessage
+    });
+    process.exit(1);
+  }
+};
+
+// Inicializar base de datos
+initializeDatabase();
 
 // Rate limiting
 const limiter = rateLimit({
