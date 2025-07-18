@@ -84,7 +84,44 @@ app.use(cors({
 
 ## 🚀 Cómo Usar las Soluciones
 
-### Opción 1: Reconstruir el Contenedor (Recomendado)
+### Opción 1: Despliegue automático para usuarios ROOT
+```bash
+# Para usuarios con acceso root (recomendado)
+chmod +x deploy-root.sh
+./deploy-root.sh
+```
+
+### Opción 2: Corrección específica de permisos ROOT
+```bash
+# Solo corrección de permisos como root
+chmod +x fix-root-permissions.sh
+./fix-root-permissions.sh
+
+# Luego desplegar manualmente
+docker-compose build --no-cache
+docker-compose up -d
+```
+
+### Opción 3: Despliegue automático completo (usuarios no-root)
+```bash
+# Para usuarios sin acceso root
+chmod +x deploy-fix.sh
+./deploy-fix.sh
+```
+
+### Opción 4: Corrección Manual de Permisos del Host + Despliegue
+```bash
+# Paso 1: Corregir permisos en el host
+chmod +x fix-host-permissions.sh
+./fix-host-permissions.sh
+
+# Paso 2: Reconstruir contenedor
+docker-compose down
+docker-compose build --no-cache
+docker-compose up -d
+```
+
+### Opción 5: Solo Reconstruir el Contenedor
 ```bash
 # Detener servicios actuales
 docker-compose down
@@ -96,23 +133,14 @@ docker-compose build --no-cache
 docker-compose up -d
 ```
 
-### Opción 2: Verificar Permisos Manualmente
+### Opción 6: Corrección de Emergencia (Si persisten problemas)
 ```bash
-# Ejecutar script de verificación
-npm run fix-permissions
+# Corregir permisos del host como root
+sudo chown -R 1001:1001 ./uploads/
+sudo chmod -R 777 ./uploads/
 
-# O directamente
-node fix-permissions.js
-```
-
-### Opción 3: Corrección en Contenedor Existente
-```bash
-# Acceder al contenedor
-docker exec -it laboratorio-service sh
-
-# Ejecutar corrección de permisos
-chmod -R 775 /app/uploads
-chown -R laboratorio:nodejs /app/uploads
+# Reiniciar contenedor
+docker-compose restart laboratorio-service
 ```
 
 ## 🔍 Verificación de la Solución
@@ -173,23 +201,74 @@ El servicio ahora incluye logging detallado:
 
 ## 🔧 Troubleshooting
 
-### Si persisten problemas de permisos:
+### Problemas de Permisos en Servidor Linux
+
+#### Diagnóstico:
 ```bash
-# Verificar usuario del contenedor
-docker exec -it laboratorio-service whoami
-
-# Verificar permisos del directorio host
+# 1. Verificar permisos del directorio host
 ls -la ./uploads/
+ls -la ./uploads/defectos/
 
-# Corregir permisos en el host si es necesario
+# 2. Verificar usuario del contenedor
+docker exec -it laboratorio-service whoami
+docker exec -it laboratorio-service id
+
+# 3. Verificar permisos dentro del contenedor
+docker exec -it laboratorio-service ls -la /app/uploads/
+
+# 4. Probar escritura desde el contenedor
+docker exec -it laboratorio-service touch /app/uploads/defectos/test.txt
+docker exec -it laboratorio-service rm /app/uploads/defectos/test.txt
+```
+
+#### Soluciones Específicas para Linux:
+
+**Problema: Directorio propiedad de root**
+```bash
+# Solución: Cambiar propietario a UID 1001 (usuario laboratorio del contenedor)
 sudo chown -R 1001:1001 ./uploads/
 sudo chmod -R 775 ./uploads/
 ```
 
-### Si persisten problemas de CORS:
+**Problema: SELinux bloqueando acceso**
+```bash
+# Verificar si SELinux está activo
+getenforce
+
+# Si está activo, configurar contexto para Docker
+sudo setsebool -P container_manage_cgroup on
+sudo chcon -Rt svirt_sandbox_file_t ./uploads/
+```
+
+**Problema: AppArmor bloqueando acceso**
+```bash
+# Verificar estado de AppArmor
+sudo aa-status
+
+# Temporalmente deshabilitar para Docker (no recomendado para producción)
+sudo aa-complain /etc/apparmor.d/docker
+```
+
+**Problema: Filesystem con noexec**
+```bash
+# Verificar montajes
+mount | grep uploads
+
+# Si está montado con noexec, remontar
+sudo mount -o remount,exec ./uploads
+```
+
+### Problemas de CORS:
 1. Verificar que el frontend esté accediendo a `http://192.168.20.158:3004`
 2. Comprobar que no hay proxies o firewalls bloqueando
 3. Verificar logs del navegador para errores específicos de CORS
+4. Probar con curl:
+```bash
+curl -H "Origin: http://localhost:5173" \
+     -H "Access-Control-Request-Method: POST" \
+     -X OPTIONS \
+     http://192.168.20.158:3004/api/laboratorio/defectos
+```
 
 ## 📝 Notas Importantes
 

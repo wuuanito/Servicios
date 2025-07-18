@@ -42,23 +42,29 @@ log_info "Docker está ejecutándose correctamente"
 log_info "Deteniendo servicios existentes..."
 docker-compose down
 
-# Crear directorio de uploads en el host si no existe
-log_info "Creando directorio de uploads en el host..."
-mkdir -p ./uploads/defectos
-
-# Establecer permisos correctos en el host
-log_info "Configurando permisos en el directorio host..."
-if [[ "$OSTYPE" == "linux-gnu"* ]] || [[ "$OSTYPE" == "darwin"* ]]; then
-    # Linux o macOS
-    sudo chown -R 1001:1001 ./uploads/ 2>/dev/null || chown -R 1001:1001 ./uploads/ 2>/dev/null || log_warning "No se pudieron cambiar los propietarios (puede ser normal)"
-    chmod -R 775 ./uploads/
-    log_success "Permisos configurados en sistema Unix"
-elif [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]]; then
-    # Windows
-    icacls ./uploads /grant Everyone:F /T > /dev/null 2>&1 || log_warning "No se pudieron configurar permisos en Windows (puede ser normal)"
-    log_success "Permisos configurados en Windows"
+# Ejecutar corrección de permisos del host
+log_info "Ejecutando corrección de permisos del host..."
+if [ -f "./fix-host-permissions.sh" ]; then
+    chmod +x ./fix-host-permissions.sh
+    ./fix-host-permissions.sh
 else
-    log_warning "Sistema operativo no reconocido, saltando configuración de permisos del host"
+    log_warning "Script fix-host-permissions.sh no encontrado, aplicando corrección básica..."
+    # Crear directorio de uploads en el host si no existe
+    mkdir -p ./uploads/defectos
+    
+    # Establecer permisos correctos en el host
+    if [[ "$OSTYPE" == "linux-gnu"* ]] || [[ "$OSTYPE" == "darwin"* ]]; then
+        # Linux o macOS
+        sudo chown -R 1001:1001 ./uploads/ 2>/dev/null || chown -R 1001:1001 ./uploads/ 2>/dev/null || log_warning "No se pudieron cambiar los propietarios (puede ser normal)"
+        chmod -R 775 ./uploads/
+        log_success "Permisos configurados en sistema Unix"
+    elif [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]]; then
+        # Windows
+        icacls ./uploads /grant Everyone:F /T > /dev/null 2>&1 || log_warning "No se pudieron configurar permisos en Windows (puede ser normal)"
+        log_success "Permisos configurados en Windows"
+    else
+        log_warning "Sistema operativo no reconocido, saltando configuración de permisos del host"
+    fi
 fi
 
 # Limpiar imágenes Docker antiguas

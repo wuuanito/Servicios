@@ -26,14 +26,14 @@ COPY . .
 COPY init-container.sh /usr/local/bin/init-container.sh
 RUN chmod +x /usr/local/bin/init-container.sh
 
-# Crear directorio para uploads con permisos correctos
+# Crear directorio para uploads con permisos correctos ANTES de cambiar usuario
 RUN mkdir -p /app/uploads/defectos
 RUN chown -R laboratorio:nodejs /app
 RUN chmod -R 755 /app
 RUN chmod -R 775 /app/uploads
 
-# Cambiar a usuario no-root
-USER laboratorio
+# IMPORTANTE: No cambiar a usuario no-root aún para permitir corrección de permisos
+# El script de inicialización manejará el cambio de usuario después de corregir permisos
 
 # Exponer puerto
 EXPOSE 3004
