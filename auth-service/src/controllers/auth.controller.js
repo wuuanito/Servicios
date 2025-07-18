@@ -54,7 +54,8 @@ const register = async (req, res, next) => {
         lastName: user.lastName,
         role: user.role,
         department: user.department,
-        jobTitle: user.jobTitle
+        jobTitle: user.jobTitle,
+        isActive: user.isActive  // AGREGADO para consistencia
       },
       accessToken,
       refreshToken
@@ -87,6 +88,13 @@ const login = async (req, res, next) => {
       });
     }
     
+    // Check if user is active
+    if (!user.isActive) {
+      return res.status(403).json({ 
+        error: 'Account is deactivated. Please contact administrator.' 
+      });
+    }
+    
     // Verify password
     const isPasswordValid = await authService.verifyPassword(password, user.password);
     if (!isPasswordValid) {
@@ -114,7 +122,8 @@ const login = async (req, res, next) => {
         lastName: user.lastName,
         role: user.role,
         department: user.department,  // AGREGADO
-        jobTitle: user.jobTitle       // AGREGADO
+        jobTitle: user.jobTitle,      // AGREGADO
+        isActive: user.isActive       // AGREGADO para frontend
       },
       accessToken,
       refreshToken
@@ -202,6 +211,7 @@ const getProfile = async (req, res, next) => {
       role: userProfile.role,
       department: userProfile.department,
       jobTitle: userProfile.jobTitle,
+      isActive: userProfile.isActive,  // AGREGADO para consistencia
       createdAt: userProfile.createdAt,
       lastLogin: userProfile.lastLogin
     }));
