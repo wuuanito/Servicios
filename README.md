@@ -48,9 +48,24 @@ sudo usermod -aG docker $USER
 sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
-# Instalar Node.js y PM2
+# Instalar Node.js y npm
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 sudo apt-get install -y nodejs
+
+# Si npm no está disponible, instalarlo por separado
+sudo apt-get install -y npm
+
+# Verificar instalación
+node --version
+npm --version
+
+# Si npm sigue sin funcionar, usar método alternativo:
+# curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+# source ~/.bashrc
+# nvm install 18
+# nvm use 18
+
+# Instalar PM2
 sudo npm install -g pm2
 
 # Instalar MySQL
@@ -141,10 +156,10 @@ SERVIDOR_RPS_PORT=4000
 
 ```bash
 # Instalar dependencias para servicios dockerizados
-cd auth-service && npm install && cd ..
-cd calendar-service && npm install && cd ..
-cd laboratorio-service && npm install && cd ..
-cd ServicioSolicitudesOt && npm install && cd ..
+sudo cd auth-service && npm install && cd ..
+sudo cd calendar-service && npm install && cd ..
+sudo cd laboratorio-service && npm install && cd ..
+sudo cd ServicioSolicitudesOt && npm install && cd ..
 
 # Instalar dependencias para servicios PM2
 cd Cremer-Backend && npm install && cd ..
