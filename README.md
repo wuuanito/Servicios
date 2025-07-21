@@ -1,8 +1,8 @@
-# NaturePharma - Sistema de Microservicios Completo
+# 🏥 NaturePharma - Sistema de Microservicios Completo
 
 ## 🏗️ Arquitectura del Sistema
 
-Este proyecto contiene una suite completa de microservicios para NaturePharma, incluyendo servicios dockerizados y servicios backend especializados gestionados con PM2.
+Este proyecto contiene una suite completa de microservicios dockerizados para NaturePharma, incluyendo gestión centralizada, monitoreo en tiempo real y despliegue automatizado.
 
 ### Servicios Incluidos
 

@@ -1,31 +1,56 @@
+# Dockerfile para el servicio de monitoreo de logs
 FROM node:18-alpine
 
-# Instalar Docker CLI para ejecutar comandos docker-compose
-RUN apk add --no-cache docker-cli docker-compose
+# Instalar dependencias del sistema
+RUN apk add --no-cache curl
 
-# Crear directorio de trabajo
+# Establecer directorio de trabajo
 WORKDIR /app
 
-# Copiar package.json
-COPY log-monitor-package.json package.json
+# Crear package.json para el monitor de logs
+RUN echo '{
+  "name": "naturepharma-log-monitor",
+  "version": "1.0.0",
+  "description": "Monitor de logs para NaturePharma Services",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2",
+    "cors": "^2.8.5",
+    "dockerode": "^3.3.5",
+    "winston": "^3.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}' > package.json
 
 # Instalar dependencias
-RUN npm install --only=production
+RUN npm install
 
-# Copiar código fuente
-COPY log-monitor-service.js .
-COPY public/ ./public/
+# Copiar archivos del servidor
+COPY log-monitor/ .
 
-# Crear usuario no-root para seguridad
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nodejs -u 1001
+# Crear usuario no-root
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S logmonitor -u 1001
 
-# Cambiar propietario de archivos
-RUN chown -R nodejs:nodejs /app
-USER nodejs
+# Cambiar permisos
+RUN chown -R logmonitor:nodejs /app
+
+# Cambiar a usuario no-root
+USER logmonitor
 
 # Exponer puerto
 EXPOSE 8080
 
-# Comando para ejecutar la aplicación
-CMD ["node", "log-monitor-service.js"]
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:8080/health || exit 1
+
+# Comando de inicio
+CMD ["npm", "start"]

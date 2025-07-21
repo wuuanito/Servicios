@@ -1,59 +1,199 @@
 version: '3.8'
 
-# Docker Compose para desarrollo local
-# Uso: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
-
 services:
-  # Configuraciones específicas para desarrollo
+  # Servicio de autenticación - Desarrollo
   auth-service:
+    build: 
+      context: ./auth-service
+      dockerfile: Dockerfile
+    container_name: auth-service-dev
+    ports:
+      - "4001:4001"
     environment:
       - NODE_ENV=development
+      - PORT=4001
+      - DB_HOST=host.docker.internal
+      - DB_PORT=3306
+      - DB_NAME=auth_service_db
+      - DB_USER=naturepharma
+      - DB_PASSWORD=Root123!
+      - JWT_SECRET=dev_jwt_secret_key
+      - JWT_EXPIRES_IN=24h
     volumes:
       - ./auth-service/src:/app/src
       - ./auth-service/logs:/app/logs
+      - /app/node_modules
+    networks:
+      - naturepharma-dev-network
+    restart: unless-stopped
     command: npm run dev
 
+  # Servicio de calendario - Desarrollo
   calendar-service:
+    build:
+      context: ./calendar-service
+      dockerfile: Dockerfile
+    container_name: calendar-service-dev
+    ports:
+      - "3003:3003"
     environment:
       - NODE_ENV=development
+      - PORT=3003
+      - DB_HOST=host.docker.internal
+      - DB_PORT=3306
+      - DB_NAME=calendar_service_db
+      - DB_USER=naturepharma
+      - DB_PASSWORD=Root123!
+      - GMAIL_USER=${GMAIL_USER}
+      - GMAIL_APP_PASSWORD=${GMAIL_APP_PASSWORD}
     volumes:
       - ./calendar-service/src:/app/src
+      - /app/node_modules
+    networks:
+      - naturepharma-dev-network
+    restart: unless-stopped
     command: npm run dev
 
+  # Servicio de laboratorio - Desarrollo
   laboratorio-service:
+    build:
+      context: ./laboratorio-service
+      dockerfile: Dockerfile
+    container_name: laboratorio-service-dev
+    ports:
+      - "3004:3004"
     environment:
       - NODE_ENV=development
+      - PORT=3004
+      - DB_HOST=host.docker.internal
+      - DB_PORT=3306
+      - DB_NAME=laboratorio_db
+      - DB_USER=naturepharma
+      - DB_PASSWORD=Root123!
+      - FRONTEND_URL=http://localhost:3000
+      - BASE_URL=http://localhost:3004
     volumes:
       - ./laboratorio-service/src:/app/src
       - ./laboratorio-service/uploads:/app/uploads
+      - /app/node_modules
+    networks:
+      - naturepharma-dev-network
+    restart: unless-stopped
     command: npm run dev
 
+  # Servicio de solicitudes - Desarrollo
   solicitudes-service:
+    build:
+      context: ./ServicioSolicitudesOt
+      dockerfile: Dockerfile
+    container_name: solicitudes-service-dev
+    ports:
+      - "3001:3001"
     environment:
       - NODE_ENV=development
+      - PORT=3001
+      - DB_HOST=host.docker.internal
+      - DB_PORT=3306
+      - DB_NAME=sistema_solicitudes
+      - DB_USER=naturepharma
+      - DB_PASSWORD=Root123!
     volumes:
       - ./ServicioSolicitudesOt:/app
+      - ./ServicioSolicitudesOt/uploads:/app/uploads
       - /app/node_modules
+    networks:
+      - naturepharma-dev-network
+    restart: unless-stopped
     command: npm run dev
 
-  # mysql:  # Comentado porque ahora usa MySQL local
-  #   environment:
-  #     - MYSQL_GENERAL_LOG=1
-  #     - MYSQL_GENERAL_LOG_FILE=/var/lib/mysql/general.log
-  #   ports:
-  #     - "3306:3306"  # Exponer puerto para acceso directo en desarrollo
-
-  # Servicio adicional para desarrollo: Adminer (alternativa ligera a phpMyAdmin)
-  adminer:
-    image: adminer:latest
-    container_name: naturepharma-adminer
+  # Servicio Cremer Backend - Desarrollo
+  cremer-backend:
+    build:
+      context: ./Cremer-Backend
+      dockerfile: Dockerfile
+    container_name: cremer-backend-dev
     ports:
-      - "8081:8080"
+      - "3002:3002"
     environment:
-      - ADMINER_DEFAULT_SERVER=host.docker.internal
+      - NODE_ENV=development
+      - PORT=3002
       - DB_HOST=host.docker.internal
-    # depends_on:
-    #   - mysql  # Comentado porque ahora usa MySQL local
+      - DB_PORT=3306
+      - DB_NAME=cremer_db
+      - DB_USER=naturepharma
+      - DB_PASSWORD=Root123!
+    volumes:
+      - ./Cremer-Backend:/app
+      - /app/node_modules
     networks:
-      - naturepharma-network
+      - naturepharma-dev-network
     restart: unless-stopped
+    command: npm run dev
+
+  # Servicio Tecnomaco Backend - Desarrollo
+  tecnomaco-backend:
+    build:
+      context: ./Tecnomaco-Backend
+      dockerfile: Dockerfile
+    container_name: tecnomaco-backend-dev
+    ports:
+      - "3006:3006"
+    environment:
+      - NODE_ENV=development
+      - PORT=3006
+      - DB_HOST=host.docker.internal
+      - DB_PORT=3306
+      - DB_NAME=tecnomaco_db
+      - DB_USER=naturepharma
+      - DB_PASSWORD=Root123!
+    volumes:
+      - ./Tecnomaco-Backend:/app
+      - /app/node_modules
+    networks:
+      - naturepharma-dev-network
+    restart: unless-stopped
+    command: npm run dev
+
+  # Servidor RPS - Desarrollo
+  servidor-rps:
+    build:
+      context: ./SERVIDOR_RPS
+      dockerfile: Dockerfile
+    container_name: servidor-rps-dev
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=development
+      - PORT=4000
+      - DB_SERVER=host.docker.internal
+      - DB_PORT=1433
+      - DB_NAME=NATUREPHARMA
+      - DB_USER=sa
+      - DB_PASSWORD=Root123!
+    volumes:
+      - ./SERVIDOR_RPS:/app
+      - /app/node_modules
+    networks:
+      - naturepharma-dev-network
+    restart: unless-stopped
+    command: npm run dev
+
+  # phpMyAdmin para desarrollo
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: naturepharma-phpmyadmin-dev
+    ports:
+      - "8081:80"
+    environment:
+      - PMA_HOST=host.docker.internal
+      - PMA_PORT=3306
+      - PMA_USER=naturepharma
+      - PMA_PASSWORD=Root123!
+      - MYSQL_ROOT_PASSWORD=Root123!
+    networks:
+      - naturepharma-dev-network
+    restart: unless-stopped
+
+networks:
+  naturepharma-dev-network:
+    driver: bridge
