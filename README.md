@@ -32,6 +32,29 @@ Este proyecto contiene una suite completa de microservicios para NaturePharma, i
 - **MySQL 8.0+** instalado localmente
 - **Git**
 
+### Instalación Automática en Ubuntu/Linux
+
+Para instalar todas las dependencias automáticamente en Ubuntu:
+
+```bash
+# Hacer el script ejecutable
+chmod +x install-dependencies-ubuntu.sh
+
+# Ejecutar instalación (requiere sudo)
+sudo ./install-dependencies-ubuntu.sh
+
+# Cerrar sesión y volver a iniciar para aplicar permisos
+# Luego ejecutar el sistema
+./start-system-ubuntu.sh
+```
+
+Este script instalará:
+- Docker CE
+- Docker Compose
+- Dependencias del sistema
+- Configurará permisos de usuario
+- Opcionalmente Node.js para desarrollo
+
 ### 1. Instalación de Dependencias
 
 #### En Ubuntu:
@@ -85,10 +108,30 @@ docker-compose --version
 
 ### 2. Configuración del Proyecto
 
+#### En Windows
+```powershell
+# Clonar el repositorio
+git clone <URL_DEL_REPOSITORIO>
+cd Servicios
+
+# Copiar archivo de variables de entorno
+copy .env.example .env
+
+# Editar variables de entorno según tu configuración
+notepad .env
+
+# Iniciar todos los servicios
+.\start-system.sh
+```
+
+#### En Ubuntu/Linux
 ```bash
 # Clonar el repositorio
 git clone <URL_DEL_REPOSITORIO>
 cd Servicios
+
+# Instalar dependencias (primera vez)
+sudo ./install-dependencies-ubuntu.sh
 
 # Copiar archivo de variables de entorno
 cp .env.example .env
@@ -96,10 +139,11 @@ cp .env.example .env
 # Editar variables de entorno según tu configuración
 nano .env
 
-# El sistema está completamente dockerizado
-# No es necesario instalar dependencias manualmente
-# Docker se encargará de todo durante la construcción
+# Iniciar todos los servicios
+./start-system-ubuntu.sh
 ```
+
+**Nota**: El sistema está completamente dockerizado. No es necesario instalar dependencias manualmente, Docker se encargará de todo durante la construcción.
 
 ### 3. Configuración de MySQL
 
@@ -630,15 +674,41 @@ sudo chmod -R 755 uploads/
 
 ### Scripts de Diagnóstico y Reparación
 
+#### Para Windows (PowerShell)
+- `debug-build.ps1` - Script de diagnóstico completo para Windows
+- `start-system.sh` - Script principal de inicio del sistema
+
+#### Para Ubuntu/Linux (Bash)
+- `debug-build-ubuntu.sh` - Script de diagnóstico completo que verifica Dockerfiles, construye servicios individualmente y proporciona información detallada de errores
+- `fix-docker-context-ubuntu.sh` - Script de reparación rápida para problemas de contexto Docker
+- `start-system-ubuntu.sh` - Script principal de inicio del sistema para Ubuntu
+
+#### Uso de Scripts de Diagnóstico
+
+**En Windows (PowerShell)**
+```powershell
+# Para diagnóstico completo
+.\debug-build.ps1
+
+# Para inicio normal
+.\start-system.sh
+```
+
+**En Ubuntu/Linux (Bash)**
 ```bash
-# Script de diagnóstico completo
-./debug-build.sh
+# Hacer scripts ejecutables
+chmod +x debug-build-ubuntu.sh
+chmod +x fix-docker-context-ubuntu.sh
+chmod +x start-system-ubuntu.sh
 
-# Solución rápida para problemas de contexto Docker
-./fix-docker-context.sh
+# Para diagnóstico completo
+./debug-build-ubuntu.sh
 
-# Inicio normal del sistema
-./start-system.sh
+# Para reparación rápida
+./fix-docker-context-ubuntu.sh
+
+# Para inicio normal
+./start-system-ubuntu.sh
 ```
 
 ### Comandos de Diagnóstico Manual
@@ -712,9 +782,13 @@ Servicios/
 │   └── nginx.conf            # Configuración del proxy reverso
 ├── database/                  # Scripts de inicialización de BD
 ├── docker-compose.yml         # Orquestación completa del sistema
-├── start-system.sh           # Script de inicio automático
-├── debug-build.sh            # Script de diagnóstico completo
-├── fix-docker-context.sh     # Script de reparación de contexto Docker
+├── start-system.sh           # Script de inicio automático para Windows
+├── start-system-ubuntu.sh    # Script de inicio automático para Ubuntu/Linux
+├── debug-build.sh            # Script de diagnóstico completo (legacy)
+├── debug-build-ubuntu.sh     # Script de diagnóstico completo para Ubuntu/Linux
+├── fix-docker-context.sh     # Script de reparación de contexto Docker (legacy)
+├── fix-docker-context-ubuntu.sh # Script de reparación de contexto Docker para Ubuntu/Linux
+├── install-dependencies-ubuntu.sh # Script completo de instalación de dependencias para Ubuntu
 ├── start-log-monitor.sh      # Script de inicio del monitor web
 ├── monitor-logs.sh           # Script de monitoreo de logs por terminal
 ├── log-monitor-service.js    # Servicio backend del monitor web
