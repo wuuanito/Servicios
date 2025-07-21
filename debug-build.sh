@@ -42,14 +42,31 @@ echo ""
 
 # Verificar que existan los Dockerfiles
 echo "🔍 Verificando Dockerfiles..."
-services=("auth-service" "calendar-service" "laboratorio-service" "ServicioSolicitudesOt" "Cremer-Backend" "Tecnomaco-Backend" "SERVIDOR_RPS")
+services=("auth-service" "calendar-service" "laboratorio-service" "solicitudes-service" "Cremer-Backend" "Tecnomaco-Backend" "SERVIDOR_RPS")
 missing_dockerfiles=()
 
+# Mapeo de nombres de servicios a directorios
+declare -A service_dirs
+service_dirs["auth-service"]="auth-service"
+service_dirs["calendar-service"]="calendar-service"
+service_dirs["laboratorio-service"]="laboratorio-service"
+service_dirs["solicitudes-service"]="ServicioSolicitudesOt"
+service_dirs["Cremer-Backend"]="Cremer-Backend"
+service_dirs["Tecnomaco-Backend"]="Tecnomaco-Backend"
+service_dirs["SERVIDOR_RPS"]="SERVIDOR_RPS"
+
 for service in "${services[@]}"; do
-    if [ -f "$service/Dockerfile" ]; then
-        echo "✅ $service/Dockerfile encontrado"
+    # Obtener el directorio correspondiente
+    if [[ "$service" == "solicitudes-service" ]]; then
+        dir="ServicioSolicitudesOt"
     else
-        echo "❌ $service/Dockerfile NO encontrado"
+        dir="$service"
+    fi
+    
+    if [ -f "$dir/Dockerfile" ]; then
+        echo "✅ $service/Dockerfile encontrado (en $dir/)"
+    else
+        echo "❌ $service/Dockerfile NO encontrado (buscando en $dir/)"
         missing_dockerfiles+=("$service")
     fi
 done

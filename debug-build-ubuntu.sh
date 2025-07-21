@@ -54,13 +54,20 @@ echo "Directorio actual: $(pwd)"
 
 # Verificar Dockerfiles de servicios
 echo "\n4. Verificando Dockerfiles..."
-services=("auth-service" "calendar-service" "laboratorio-service" "ServicioSolicitudesOt" "Cremer-Backend" "Tecnomaco-Backend" "SERVIDOR_RPS")
+services=("auth-service" "calendar-service" "laboratorio-service" "solicitudes-service" "Cremer-Backend" "Tecnomaco-Backend" "SERVIDOR_RPS")
 
 for service in "${services[@]}"; do
-    if [ -f "$service/Dockerfile" ]; then
-        show_success "$service/Dockerfile encontrado"
+    # Obtener el directorio correspondiente
+    if [[ "$service" == "solicitudes-service" ]]; then
+        dir="ServicioSolicitudesOt"
     else
-        show_error "$service/Dockerfile NO encontrado"
+        dir="$service"
+    fi
+    
+    if [ -f "$dir/Dockerfile" ]; then
+        show_success "$service/Dockerfile encontrado (en $dir/)"
+    else
+        show_error "$service/Dockerfile NO encontrado (buscando en $dir/)"
     fi
 done
 

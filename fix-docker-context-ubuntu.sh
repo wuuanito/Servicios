@@ -63,18 +63,25 @@ show_success "Entorno Docker limpiado completamente"
 
 # Verificar estructura de directorios
 echo "\n3. Verificando estructura de directorios..."
-services=("auth-service" "calendar-service" "laboratorio-service" "ServicioSolicitudesOt" "Cremer-Backend" "Tecnomaco-Backend" "SERVIDOR_RPS")
+services=("auth-service" "calendar-service" "laboratorio-service" "solicitudes-service" "Cremer-Backend" "Tecnomaco-Backend" "SERVIDOR_RPS")
 
 for service in "${services[@]}"; do
-    if [ -d "$service" ]; then
-        show_success "Directorio $service existe"
-        if [ -f "$service/Dockerfile" ]; then
-            show_success "$service/Dockerfile existe"
+    # Obtener el directorio correspondiente
+    if [[ "$service" == "solicitudes-service" ]]; then
+        dir="ServicioSolicitudesOt"
+    else
+        dir="$service"
+    fi
+    
+    if [ -d "$dir" ]; then
+        show_success "Directorio $dir existe (servicio: $service)"
+        if [ -f "$dir/Dockerfile" ]; then
+            show_success "$service/Dockerfile existe (en $dir/)"
         else
-            show_error "$service/Dockerfile NO existe"
+            show_error "$service/Dockerfile NO existe (buscando en $dir/)"
         fi
     else
-        show_error "Directorio $service NO existe"
+        show_error "Directorio $dir NO existe (servicio: $service)"
     fi
 done
 
@@ -96,11 +103,18 @@ fi
 echo "\n4. Construyendo imágenes con contexto explícito..."
 
 for service in "${services[@]}"; do
-    echo "\n--- Construyendo $service ---"
-    show_info "Contexto: ./$service/"
-    show_info "Dockerfile: ./$service/Dockerfile"
+    # Obtener el directorio correspondiente
+    if [[ "$service" == "solicitudes-service" ]]; then
+        dir="ServicioSolicitudesOt"
+    else
+        dir="$service"
+    fi
     
-    if sudo docker build -t "naturepharma-$service:latest" "./$service/"; then
+    echo "\n--- Construyendo $service ---"
+    show_info "Contexto: ./$dir/"
+    show_info "Dockerfile: ./$dir/Dockerfile"
+    
+    if sudo docker build -t "naturepharma-$service:latest" "./$dir/"; then
         show_success "$service construido exitosamente"
     else
         show_error "Error al construir $service"

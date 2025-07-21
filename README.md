@@ -619,7 +619,27 @@ docker-compose logs -f --tail=100
 
 ### Problemas Comunes
 
-#### 1. Error de conexión a base de datos
+#### 1. Error "no such service: ServicioSolicitudesOt"
+**Causa:** Inconsistencia entre nombres de servicios en docker-compose.yml y scripts
+**Solución:**
+```bash
+# Ejecutar script de corrección
+./fix-service-names.sh
+
+# Usar nombres correctos de servicios:
+# - solicitudes-service (no ServicioSolicitudesOt)
+# - cremer-backend (no Cremer-Backend)
+# - tecnomaco-backend (no Tecnomaco-Backend)
+# - servidor-rps (no SERVIDOR_RPS)
+
+# Construir servicios individualmente
+docker-compose build solicitudes-service
+docker-compose build cremer-backend
+docker-compose build tecnomaco-backend
+docker-compose build servidor-rps
+```
+
+#### 2. Error de conexión a base de datos
 ```bash
 # Verificar que MySQL esté corriendo
 sudo systemctl status mysql  # Linux
@@ -632,7 +652,7 @@ mysql -u naturepharma -pRoot123! -e "SHOW DATABASES;"
 sudo tail -f /var/log/mysql/error.log  # Linux
 ```
 
-#### 2. Puerto ya en uso
+#### 3. Puerto ya en uso
 ```bash
 # Verificar qué proceso usa el puerto
 sudo netstat -tulpn | grep :3001  # Linux
@@ -643,7 +663,7 @@ sudo kill -9 <PID>  # Linux
 taskkill /PID <PID> /F  # Windows
 ```
 
-#### 3. Contenedores no inician correctamente
+#### 4. Contenedores no inician correctamente
 ```bash
 # Verificar logs de contenedores
 docker-compose logs cremer-backend
@@ -662,7 +682,7 @@ docker-compose restart servidor-rps
 docker-compose up -d --build cremer-backend
 ```
 
-#### 4. Problemas de permisos (Linux)
+#### 5. Problemas de permisos (Linux)
 ```bash
 # Verificar permisos de directorios
 ls -la uploads/
@@ -796,6 +816,10 @@ Servicios/
 ├── Dockerfile.log-monitor    # Docker para el monitor web
 ├── naturepharma.service      # Servicio systemd para inicio automático
 ├── deploy.sh                 # Script de despliegue Docker
+├── fix-missing-dockerfiles.sh    # Reparar Dockerfiles faltantes
+├── fix-service-names.sh          # Corregir inconsistencias de nombres
+├── test-build-services.sh        # Probar construcción de servicios
+├── setup-quality-tools.sh        # Configurar herramientas de calidad
 ├── .env.example              # Variables de entorno de ejemplo
 └── README.md                 # Este archivo
 ```

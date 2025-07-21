@@ -33,6 +33,7 @@ echo ""
 # Verificar estructura de directorios
 echo "🔍 Verificando estructura de directorios..."
 required_dirs=("auth-service" "calendar-service" "laboratorio-service" "ServicioSolicitudesOt" "Cremer-Backend" "Tecnomaco-Backend" "SERVIDOR_RPS")
+service_names=("auth-service" "calendar-service" "laboratorio-service" "solicitudes-service" "cremer-backend" "tecnomaco-backend" "servidor-rps")
 
 for dir in "${required_dirs[@]}"; do
     if [ -d "$dir" ] && [ -f "$dir/Dockerfile" ]; then
@@ -69,7 +70,7 @@ echo ""
 services_to_build=(
     "calendar-service:naturepharma-calendar-service"
     "laboratorio-service:naturepharma-laboratorio-service"
-    "ServicioSolicitudesOt:naturepharma-solicitudes-service"
+    "solicitudes-service:naturepharma-solicitudes-service"
     "Cremer-Backend:naturepharma-cremer-backend"
     "Tecnomaco-Backend:naturepharma-tecnomaco-backend"
     "SERVIDOR_RPS:naturepharma-servidor-rps"
