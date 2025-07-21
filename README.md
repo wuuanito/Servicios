@@ -628,7 +628,20 @@ sudo chown -R $USER:$USER uploads/
 sudo chmod -R 755 uploads/
 ```
 
-### Comandos de Diagnóstico
+### Scripts de Diagnóstico y Reparación
+
+```bash
+# Script de diagnóstico completo
+./debug-build.sh
+
+# Solución rápida para problemas de contexto Docker
+./fix-docker-context.sh
+
+# Inicio normal del sistema
+./start-system.sh
+```
+
+### Comandos de Diagnóstico Manual
 
 ```bash
 # Verificar conectividad entre contenedores
@@ -639,15 +652,40 @@ docker-compose exec auth-service bash
 
 # Verificar logs específicos
 docker-compose logs --tail=50 laboratorio-service
-pm2 logs cremer-backend --lines 50
 
 # Verificar uso de recursos
 docker stats
-pm2 monit
 
 # Verificar puertos en uso
 sudo netstat -tulpn  # Linux
 netstat -ano  # Windows
+
+# Limpiar completamente Docker
+docker system prune -af --volumes
+docker-compose down --remove-orphans --volumes
+```
+
+### Problemas Comunes
+
+#### Error: "failed to read dockerfile: open Dockerfile: no such file or directory"
+**Solución:**
+```bash
+./fix-docker-context.sh
+```
+
+#### Servicios no se inician correctamente
+**Solución:**
+```bash
+./debug-build.sh
+```
+
+#### Puerto ya en uso
+**Solución:**
+```bash
+# Verificar qué proceso usa el puerto
+sudo netstat -tulpn | grep :PUERTO
+# Detener servicios conflictivos
+docker-compose down
 ```
 
 ## 📁 Estructura del Proyecto
@@ -671,17 +709,20 @@ Servicios/
 ├── public/                    # Dashboard web de monitoreo
 │   └── dashboard.html        # Interfaz web para logs
 ├── nginx/                     # Configuración de Nginx
+│   └── nginx.conf            # Configuración del proxy reverso
 ├── database/                  # Scripts de inicialización de BD
 ├── docker-compose.yml         # Orquestación completa del sistema
 ├── start-system.sh           # Script de inicio automático
+├── debug-build.sh            # Script de diagnóstico completo
+├── fix-docker-context.sh     # Script de reparación de contexto Docker
 ├── start-log-monitor.sh      # Script de inicio del monitor web
 ├── monitor-logs.sh           # Script de monitoreo de logs por terminal
 ├── log-monitor-service.js    # Servicio backend del monitor web
 ├── log-monitor-package.json  # Dependencias del monitor web
 ├── Dockerfile.log-monitor    # Docker para el monitor web
 ├── naturepharma.service      # Servicio systemd para inicio automático
-├── .env.example              # Variables de entorno de ejemplo
 ├── deploy.sh                 # Script de despliegue Docker
+├── .env.example              # Variables de entorno de ejemplo
 └── README.md                 # Este archivo
 ```
 
