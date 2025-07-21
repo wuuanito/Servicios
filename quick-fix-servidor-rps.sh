@@ -20,7 +20,7 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 # Ir al directorio del proyecto
-cd /home/$(logname)/Desktop/Servicios
+cd "$(dirname "$0")"
 
 echo -e "${YELLOW}1. Deteniendo servidor-rps...${NC}"
 docker-compose stop servidor-rps 2>/dev/null || true

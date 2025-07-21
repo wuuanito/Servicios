@@ -48,7 +48,7 @@ check_docker() {
 check_servidor_rps_files() {
     echo -e "${BLUE}🔍 Verificando archivos de SERVIDOR_RPS...${NC}"
     
-    local base_dir="/home/$(logname)/Desktop/Servicios"
+    local base_dir="$(dirname "$0")"
     local rps_dir="$base_dir/SERVIDOR_RPS"
     
     if [ ! -d "$rps_dir" ]; then
@@ -79,7 +79,7 @@ check_servidor_rps_files() {
 check_package_json_content() {
     echo -e "${BLUE}🔍 Verificando contenido de package.json...${NC}"
     
-    local base_dir="/home/$(logname)/Desktop/Servicios"
+    local base_dir="$(dirname "$0")"
     local package_file="$base_dir/SERVIDOR_RPS/package.json"
     
     if [ ! -f "$package_file" ]; then
@@ -131,7 +131,7 @@ clean_docker() {
 build_servidor_rps() {
     echo -e "${BLUE}🔨 Construyendo servidor-rps individualmente...${NC}"
     
-    local base_dir="/home/$(logname)/Desktop/Servicios"
+    local base_dir="$(dirname "$0")"
     cd "$base_dir"
     
     # Establecer permisos
@@ -180,7 +180,7 @@ test_container() {
 fix_dockerfile() {
     echo -e "${BLUE}🔧 Corrigiendo Dockerfile...${NC}"
     
-    local base_dir="/home/$(logname)/Desktop/Servicios"
+    local base_dir="$(dirname "$0")"
     local dockerfile="$base_dir/SERVIDOR_RPS/Dockerfile"
     
     # Crear backup
