@@ -5,8 +5,13 @@
 
 set -e
 
+# Cambiar al directorio del script
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
 echo "🚀 Iniciando Sistema NaturePharma..."
 echo "======================================"
+echo "📁 Directorio de trabajo: $SCRIPT_DIR"
 
 # Verificar que Docker esté corriendo
 if ! docker info > /dev/null 2>&1; then
@@ -51,7 +56,8 @@ echo "   • Solicitudes Service: http://localhost:3001"
 echo "   • Cremer Backend: http://localhost:3002"
 echo "   • Tecnomaco Backend: http://localhost:3006"
 echo "   • Servidor RPS: http://localhost:4000"
-echo "   • phpMyAdmin: http://localhost:8080"
+echo "   • Log Monitor: http://localhost:8080"
+echo "   • phpMyAdmin: http://localhost:8081"
 echo "   • Nginx Gateway: http://localhost"
 echo ""
 echo "📋 Comandos útiles:"
