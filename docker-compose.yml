@@ -177,9 +177,15 @@ services:
       - PORT=4000
       - DB_SERVER=192.168.20.158
       - DB_PORT=1433
-      - DB_NAME=NATUREPHARMA
-      - DB_USER=sa
-      - DB_PASSWORD=Root123!
+      - DB_NAME=RpsNext
+      - DB_USER=rpsuser
+      - DB_PASSWORD=rpsnext
+    healthcheck:
+      test: ["CMD", "node", "healthcheck.js"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     networks:
       - naturepharma-network
     restart: unless-stopped
