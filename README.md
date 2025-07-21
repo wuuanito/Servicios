@@ -763,6 +763,45 @@ docker-compose down --remove-orphans --volumes
 ./fix-docker-context.sh
 ```
 
+#### Error: "npm ci" falla por package-lock.json faltante
+**Problema:** Los servicios `servidor-rps` y `tecnomaco-backend` fallan al construirse porque usan `npm ci` pero no tienen `package-lock.json`.
+
+**Causa:** `npm ci` requiere un archivo `package-lock.json` existente para funcionar, pero algunos servicios solo tienen `package.json`.
+
+**Soluciones:**
+
+1. **Generar package-lock.json automáticamente:**
+   ```bash
+   # Generar lockfiles faltantes
+   ./generate-lockfiles.sh
+   
+   # Luego construir servicios
+   docker-compose build servidor-rps tecnomaco-backend
+   ```
+
+2. **Usar script completo de corrección:**
+   ```bash
+   # Corrige Dockerfiles y genera lockfiles
+   ./fix-npm-lockfiles.sh
+   ```
+
+3. **Construcción manual por servicio:**
+   ```bash
+   # Los Dockerfiles han sido actualizados para funcionar sin lockfiles
+   docker-compose build servidor-rps
+   docker-compose build tecnomaco-backend
+   ```
+
+**Servicios afectados:**
+- `servidor-rps` (directorio: SERVIDOR_RPS)
+- `tecnomaco-backend` (directorio: Tecnomaco-Backend)
+
+**Verificación:**
+```bash
+# Probar construcción de todos los servicios
+./test-build-services.sh
+```
+
 #### Servicios no se inician correctamente
 **Solución:**
 ```bash
@@ -820,6 +859,9 @@ Servicios/
 ├── fix-service-names.sh          # Corregir inconsistencias de nombres
 ├── test-build-services.sh        # Probar construcción de servicios
 ├── setup-quality-tools.sh        # Configurar herramientas de calidad
+├── fix-npm-lockfiles.sh          # Corregir problemas de package-lock.json
+├── generate-lockfiles.sh         # Generar package-lock.json faltantes
+├── test-npm-fix.sh               # Probar corrección de npm
 ├── .env.example              # Variables de entorno de ejemplo
 └── README.md                 # Este archivo
 ```
