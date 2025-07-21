@@ -8,8 +8,8 @@ echo "🧪 Probando corrección de npm para servicios problemáticos..."
 echo "========================================================"
 
 # Servicios a probar
-SERVICES=("servidor-rps" "tecnomaco-backend")
-DIRECTORIES=("SERVIDOR_RPS" "Tecnomaco-Backend")
+SERVICES=("servidor-rps" "tecnomaco-backend" "cremer-backend")
+DIRECTORIES=("SERVIDOR_RPS" "Tecnomaco-Backend" "Cremer-Backend")
 
 # Función para probar construcción de un servicio
 test_service_build() {
@@ -42,6 +42,8 @@ test_service_build() {
         echo "⚠️  Dockerfile aún usa npm ci --only=production (necesita actualización)"
         return 1
     elif grep -q "npm ci --omit=dev" "$service_dir/Dockerfile"; then
+        echo "✅ Dockerfile actualizado correctamente (usa estrategia robusta)"
+    elif grep -q "npm install --omit=dev" "$service_dir/Dockerfile"; then
         echo "✅ Dockerfile actualizado correctamente (usa estrategia robusta)"
     else
         echo "⚠️  Dockerfile no contiene comando npm esperado"

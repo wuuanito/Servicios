@@ -795,6 +795,7 @@ docker-compose down --remove-orphans --volumes
 **Servicios afectados:**
 - `servidor-rps` (directorio: SERVIDOR_RPS)
 - `tecnomaco-backend` (directorio: Tecnomaco-Backend)
+- `cremer-backend` (directorio: Cremer-Backend)
 
 **Verificación:**
 ```bash
@@ -843,6 +844,7 @@ Servicios/
 ├── docker-compose.yml         # Orquestación completa del sistema
 ├── start-system.sh           # Script de inicio automático para Windows
 ├── start-system-ubuntu.sh    # Script de inicio automático para Ubuntu/Linux
+├── sync-dockerfiles.sh       # Sincronizar y estandarizar Dockerfiles
 ├── debug-build.sh            # Script de diagnóstico completo (legacy)
 ├── debug-build-ubuntu.sh     # Script de diagnóstico completo para Ubuntu/Linux
 ├── fix-docker-context.sh     # Script de reparación de contexto Docker (legacy)
@@ -862,8 +864,92 @@ Servicios/
 ├── fix-npm-lockfiles.sh          # Corregir problemas de package-lock.json
 ├── generate-lockfiles.sh         # Generar package-lock.json faltantes
 ├── test-npm-fix.sh               # Probar corrección de npm
+├── comprehensive-health-check.sh # Verificación integral de salud del proyecto
 ├── .env.example              # Variables de entorno de ejemplo
 └── README.md                 # Este archivo
+```
+
+## 🚀 Mejoras de Calidad y Mantenibilidad
+
+### Scripts de Automatización Avanzados
+
+El proyecto incluye una suite completa de scripts para mejorar la calidad del código y facilitar el mantenimiento:
+
+#### 🔧 Scripts de Corrección Automática
+
+```bash
+# Sincronizar y estandarizar todos los Dockerfiles
+./sync-dockerfiles.sh
+
+# Corregir problemas de package-lock.json
+./fix-npm-lockfiles.sh
+
+# Generar lockfiles faltantes
+./generate-lockfiles.sh
+
+# Corregir inconsistencias de nombres de servicios
+./fix-service-names.sh
+```
+
+#### 🧪 Scripts de Verificación y Pruebas
+
+```bash
+# Verificación integral de salud del proyecto
+./comprehensive-health-check.sh
+
+# Probar corrección de npm
+./test-npm-fix.sh
+
+# Probar construcción de servicios
+./test-build-services.sh
+
+# Diagnóstico completo de construcción
+./debug-build.sh
+```
+
+#### 📊 Características de los Scripts de Calidad
+
+- **Detección automática**: Los scripts detectan automáticamente servicios y problemas
+- **Backups automáticos**: Se crean backups antes de modificar archivos
+- **Reportes detallados**: Información completa sobre el estado del proyecto
+- **Corrección robusta**: Estrategias de fallback para diferentes escenarios
+- **Verificación integral**: Chequeos de sintaxis, dependencias y configuración
+
+#### 🎯 Beneficios de Calidad
+
+1. **Consistencia**: Dockerfiles estandarizados en todos los servicios
+2. **Robustez**: Manejo de errores y estrategias de fallback
+3. **Mantenibilidad**: Scripts modulares y bien documentados
+4. **Automatización**: Reducción de tareas manuales repetitivas
+5. **Diagnóstico**: Identificación rápida de problemas
+6. **Documentación**: README completo con guías de solución
+
+### Estándares de Dockerfiles
+
+Todos los Dockerfiles siguen estos estándares:
+
+- **Base consistente**: Node.js 18 Alpine
+- **Seguridad**: Usuario no-root
+- **Optimización**: Instalación eficiente de dependencias
+- **Flexibilidad**: Soporte para proyectos con y sin package-lock.json
+- **Monitoreo**: Configuración para health checks
+
+### Flujo de Trabajo Recomendado
+
+```bash
+# 1. Verificación inicial
+./comprehensive-health-check.sh
+
+# 2. Corrección automática (si es necesario)
+./sync-dockerfiles.sh
+./fix-npm-lockfiles.sh
+
+# 3. Verificación de correcciones
+./test-npm-fix.sh
+
+# 4. Construcción y despliegue
+./test-build-services.sh
+docker-compose up -d
 ```
 
 ## 🔒 Configuración de Seguridad

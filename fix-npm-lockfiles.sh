@@ -8,7 +8,7 @@ echo "🔧 Generando package-lock.json faltantes y corrigiendo Dockerfiles..."
 echo "================================================"
 
 # Servicios que necesitan package-lock.json
-SERVICES=("SERVIDOR_RPS" "Tecnomaco-Backend")
+SERVICES=("SERVIDOR_RPS" "Tecnomaco-Backend" "Cremer-Backend")
 
 # Función para generar package-lock.json
 generate_lockfile() {
