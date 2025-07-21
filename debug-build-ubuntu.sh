@@ -252,6 +252,10 @@ if [ $services_with_errors -gt 0 ]; then
     echo "🔧 SOLUCIÓN RECOMENDADA:"
     echo "   1. Ejecuta: sudo ./fix-missing-dockerfiles-ubuntu.sh"
     echo "   2. Luego ejecuta: sudo docker-compose up -d --build"
+    echo ""
+     echo -e "${YELLOW}🔧 SOLUCIÓN ESPECÍFICA PARA SERVIDOR-RPS:${NC}"
+     echo -e "   Si el error es con servidor-rps (package.json no encontrado):"
+     echo -e "   ${GREEN}sudo ./fix-servidor-rps-ubuntu.sh${NC}"
 else
     echo "✅ Todos los Dockerfiles están presentes"
     echo ""
