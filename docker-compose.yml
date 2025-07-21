@@ -117,7 +117,7 @@ services:
     image: phpmyadmin/phpmyadmin:latest
     container_name: naturepharma-phpmyadmin
     ports:
-      - "8080:80"
+      - "8081:80"
     environment:
       - PMA_HOST=192.168.20.158
       - PMA_PORT=3306
@@ -129,6 +129,86 @@ services:
     networks:
       - naturepharma-network
     restart: unless-stopped
+
+  # Servicio Cremer Backend
+  cremer-backend:
+    build: ./Cremer-Backend
+    container_name: cremer-backend
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=production
+      - PORT=3002
+      - DB_HOST=192.168.20.158
+      - DB_PORT=3306
+      - DB_NAME=cremer_db
+      - DB_USER=naturepharma
+      - DB_PASSWORD=Root123!
+    networks:
+      - naturepharma-network
+    restart: unless-stopped
+
+  # Servicio Tecnomaco Backend
+  tecnomaco-backend:
+    build: ./Tecnomaco-Backend
+    container_name: tecnomaco-backend
+    ports:
+      - "3006:3006"
+    environment:
+      - NODE_ENV=production
+      - PORT=3006
+      - DB_HOST=192.168.20.158
+      - DB_PORT=3306
+      - DB_NAME=tecnomaco_db
+      - DB_USER=naturepharma
+      - DB_PASSWORD=Root123!
+    networks:
+      - naturepharma-network
+    restart: unless-stopped
+
+  # Servidor RPS
+  servidor-rps:
+    build: ./SERVIDOR_RPS
+    container_name: servidor-rps
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=production
+      - PORT=4000
+      - DB_SERVER=192.168.20.158
+      - DB_PORT=1433
+      - DB_NAME=NATUREPHARMA
+      - DB_USER=sa
+      - DB_PASSWORD=Root123!
+    networks:
+      - naturepharma-network
+    restart: unless-stopped
+
+  # Servicio de monitoreo de logs
+  log-monitor:
+    build:
+      context: .
+      dockerfile: Dockerfile.log-monitor
+    container_name: naturepharma-log-monitor
+    ports:
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - .:/workspace:ro
+    working_dir: /workspace
+    environment:
+      - NODE_ENV=production
+    networks:
+      - naturepharma-network
+    restart: unless-stopped
+    depends_on:
+      - auth-service
+      - calendar-service
+      - laboratorio-service
+      - solicitudes-service
+      - cremer-backend
+      - tecnomaco-backend
+      - servidor-rps
 
   # Nginx como reverse proxy (opcional)
   nginx:
@@ -145,6 +225,10 @@ services:
       - calendar-service
       - laboratorio-service
       - solicitudes-service
+      - cremer-backend
+      - tecnomaco-backend
+      - servidor-rps
+      - log-monitor
     networks:
       - naturepharma-network
     restart: unless-stopped
